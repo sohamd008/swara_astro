@@ -427,7 +427,7 @@
     .swara-btn-group {
         display: flex;
         align-items: center;
-        gap: 24px;
+        gap: clamp(12px, 3vw, 24px);
     }
 
     .swara-icon-btn {
@@ -604,7 +604,36 @@
         }
 
         .swara-btn-group {
-            gap: 16px;
+            gap: 12px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .swara-title {
+            font-size: 14px;
+        }
+
+        .swara-artist {
+            font-size: 12px;
+        }
+
+        .swara-skip-btn {
+            transform: scale(0.9);
+        }
+
+        .swara-icon-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .swara-play-trigger {
+            width: 42px;
+            height: 42px;
+        }
+
+        .swara-play-svg {
+            width: 22px;
+            height: 22px;
         }
     }
 </style>

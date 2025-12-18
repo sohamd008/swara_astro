@@ -136,21 +136,17 @@ const songs = artist.data.songs;
 
             const url = btn.getAttribute("data-url");
             if (url) {
-                // Verify if file exists with HEAD request
                 try {
-                    const response = await fetch(url, { method: "HEAD" });
-                    if (response.ok) {
-                        const link = document.createElement("a");
-                        link.href = url;
-                        link.setAttribute("download", "");
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                    } else {
-                        alert("File not found on server.");
-                    }
+                    const link = document.createElement("a");
+                    link.href = url;
+                    // For GitHub/Remote files, target="_blank" is safer to ensure it doesn't navigate away
+                    link.target = "_blank";
+                    link.setAttribute("download", "");
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
                 } catch (e) {
-                    alert("Error verifying download: " + e);
+                    alert("Error initiating download: " + e);
                 }
             }
         });
