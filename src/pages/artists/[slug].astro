@@ -103,64 +103,53 @@ const songs = artist.data.songs;
     import { playTrack, playCollection } from "../../lib/playerStore";
     import { userStart } from "../../lib/authStore";
 
-    let currentUser: any = null;
-    userStart.subscribe((user) => {
-        currentUser = user;
-        // Update UI state for download buttons
-        updateDownloadButtons(user);
-    });
-
+    // 1. Clean UI update function
     function updateDownloadButtons(user: any) {
         const downloadBtns = document.querySelectorAll(".download-btn");
         downloadBtns.forEach((btn) => {
             if (user) {
-                (btn as HTMLElement).style.opacity = "1";
+                btn.classList.remove("is-locked");
                 btn.setAttribute("title", "Download Composition");
-                btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" /></svg>`;
+                // Restore icon if needed, or just style via CSS
+                (btn as HTMLElement).style.opacity = "1";
             } else {
-                (btn as HTMLElement).style.opacity = "0.6";
+                btn.classList.add("is-locked");
                 btn.setAttribute("title", "Login to Download");
-                btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`;
+                (btn as HTMLElement).style.opacity = "0.7";
             }
         });
     }
 
-    // Initial check (in case subscription fired before DOM ready, though unlikely with script placement)
-    // Actually best to re-run on astro:page-load for ViewTransitions
-
+    // 2. Init Page Logic
     const initPage = () => {
-        const artistName = (
-            document.querySelector(".hero-title") as HTMLElement
-        )?.innerText;
-        const songItems = Array.from(
-            document.querySelectorAll(".play-btn"),
-        ).map((btn) => ({
-            url: btn.getAttribute("data-url") || "",
-            title: btn.getAttribute("data-title") || "",
-            artist: artistName || "Unknown Artist",
-        }));
+        const artistName = (document.querySelector(".hero-title") as HTMLElement)?.innerText;
+        const songItems = Array.from(document.querySelectorAll(".play-btn")).map(
+            (btn) => ({
+                url: btn.getAttribute("data-url") || "",
+                title: btn.getAttribute("data-title") || "",
+                artist: artistName || "Unknown Artist",
+            }),
+        );
 
+        // Play Buttons
         const playBtns = document.querySelectorAll(".play-btn");
-        // Remove old listeners? With Astro ViewTransitions, if the body is replaced, we don't need to remove.
-        // Elements are fresh.
         playBtns.forEach((btn, index) => {
-            // Clone to strip old listeners if elements were persisted (rare in default mode)
-            // Just adding one click handler via property is safest for no-buildup.
             (btn as HTMLElement).onclick = () => {
                 playCollection(songItems, index);
             };
         });
 
+        // Download Buttons
         const downloadBtns = document.querySelectorAll(".download-btn");
         downloadBtns.forEach((btn) => {
             (btn as HTMLElement).onclick = (e) => {
-                // Check store DIRECTLY at moment of click to avoid stale closure state
+                // IMPORTANT: Check store directly
                 const user = userStart.get();
-
+                
                 if (!user) {
                     e.preventDefault();
                     e.stopPropagation();
-                    alert("Please login to download files.");
+                    alert("🔒 This treasure is locked.\nPlease login to download this composition.");
                     window.location.href = "/login";
                     return;
                 }
@@ -181,17 +170,43 @@ const songs = artist.data.songs;
                 }
             };
         });
-
-        // Sync UI with current store state
+        
+        // Initial Update
         updateDownloadButtons(userStart.get());
-    };
+    }
 
+    // 3. Subscriptions
+    // We subscribe once to update UI whenever auth changes
+    userStart.subscribe((user) => {
+        updateDownloadButtons(user);
+    });
+
+    // 4. Lifecycle
     initPage();
-    document.addEventListener("astro:page-load", initPage);
+    document.addEventListener('astro:page-load', initPage); 
 </script>
 
 <style>
-    .artist-detail-container {
+    /* ... existing styles ... */
+    
+    /* Locked State Styling */
+    .download-btn.is-locked {
+        cursor: not-allowed;
+    }
+    .download-btn.is-locked svg {
+        opacity: 0.5;
+    }
+    /* Optional: We can add a lock icon overlay via CSS pseudo-element if desired */
+    .download-btn.is-locked::after {
+        content: "🔒";
+        font-size: 10px;
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        background: #000;
+        border-radius: 50%;
+        padding: 2px;
+    }
         width: 100%;
         max-width: 1000px;
         padding: 0 20px;

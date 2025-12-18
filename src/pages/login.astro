@@ -208,13 +208,15 @@ import Layout from "../layouts/Layout.astro";
             // 1. Get reCAPTCHA token
             let recaptchaToken = "";
             try {
-                recaptchaToken = (window as any).grecaptcha.getResponse();
+                if ((window as any).grecaptcha) {
+                    recaptchaToken = (window as any).grecaptcha.getResponse();
+                }
             } catch (err) {
                 console.error("reCAPTCHA failed to get response", err);
             }
 
             if (!recaptchaToken) {
-                alert("Please complete the reCAPTCHA challenge.");
+                alert("Please complete the reCAPTCHA challenge options.");
                 return;
             }
 
@@ -226,22 +228,46 @@ import Layout from "../layouts/Layout.astro";
 
             try {
                 // 2. Verify reCAPTCHA with backend
-                const verifyRes = await fetch("/verify", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ token: recaptchaToken }),
-                });
+                // NOTE: If /verify endpoint does not exist (static hosting), this will fail.
+                // We MUST assume failure to be secure unless configured otherwise.
+                let verificationSuccess = false;
 
-                const verifyData = await verifyRes.json();
+                try {
+                    const verifyRes = await fetch("/verify", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ token: recaptchaToken }),
+                    });
 
-                if (!verifyData.success) {
-                    alert("reCAPTCHA verification failed. Please try again.");
-                    (window as any).grecaptcha.reset();
-                    setSubmitting(false);
-                    return;
+                    if (verifyRes.ok) {
+                        const verifyData = await verifyRes.json();
+                        verificationSuccess = verifyData.success;
+                    } else {
+                        // Fallback: If 404 (static site), we technically can't verify on backend.
+                        // Ideally we block. But for dev/demo on static without functions, this locks everyone out.
+                        // I will alert the user.
+                        console.warn(
+                            "Backend verification endpoint unreachable.",
+                        );
+                        // verificationSuccess = false; // STRICT MODE
+                    }
+                } catch (verifyErr) {
+                    console.error("Verification error:", verifyErr);
                 }
 
-                // 3. Proceed with Firebase Auth
+                // STRICT CHECK: Uncomment the if-block to enforce backend verification.
+                // Ensure cloudflare functions are deployed.
+                if (!verificationSuccess) {
+                    // For debugging purposes, if the backend is missing, we might alert different msg
+                    alert(
+                        "Security verification failed. (Backend /verify endpoint required)",
+                    );
+                    (window as any).grecaptcha.reset();
+                    setSubmitting(false);
+                    return; // STOP EXECUTION
+                }
+
+                // 3. Proceed with Firebase Auth (ONLY if verification passed)
                 if (isLogin) {
                     await signInWithEmailAndPassword(auth, email, pass);
                 } else {
@@ -258,7 +284,7 @@ import Layout from "../layouts/Layout.astro";
                 }
                 window.location.href = "/profile";
             } catch (error: any) {
-                alert(error.message);
+                alert("Authentication Error: " + error.message);
                 if ((window as any).grecaptcha)
                     (window as any).grecaptcha.reset();
                 setSubmitting(false);
