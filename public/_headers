@@ -1,0 +1,34 @@
+# Security Headers
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: document-domain=()
+
+# Cache Static Assets (Images, Fonts) for 1 year
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.jpg
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.png
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.svg
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.webp
+  Cache-Control: public, max-age=31536000, immutable
+
+# Cache CSS and JS (Hashed by Astro usually, safe to cache long term if hashed)
+# But standard build output might not be hashed if not configured, safe default is 1 month
+/*.css
+  Cache-Control: public, max-age=2592000
+
+/*.js
+  Cache-Control: public, max-age=2592000
+
+# HTML should not be cached aggressively to ensure updates are seen immediately
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate

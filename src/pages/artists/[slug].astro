@@ -346,4 +346,51 @@ const songs = artist.data.songs;
         color: var(--bg-color);
         transform: scale(1.1);
     }
+
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 36px;
+            text-align: center;
+        }
+
+        .artist-bio-card {
+            padding: 24px;
+        }
+
+        .artist-bio-card h2 {
+            font-size: 26px;
+        }
+
+        .bio-content {
+            font-size: 16px;
+        }
+
+        .song-item {
+            padding: 16px;
+            gap: 12px;
+        }
+
+        .song-info {
+            gap: 16px;
+            flex: 1;
+            min-width: 0; /* Enable truncation if needed */
+        }
+
+        .song-title {
+            font-size: 16px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .song-actions {
+            gap: 10px;
+        }
+
+        .play-btn,
+        .download-btn {
+            width: 36px;
+            height: 36px;
+        }
+    }
 </style>

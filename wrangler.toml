@@ -2,4 +2,47 @@ name = "swaramanjusha"
 pages_build_output_dir = "dist"
 compatibility_date = "2024-12-18"
 
-# Optional: Add smart routing or other features here later
+# ------------------------------------------------------------------------------
+# Smart Placement
+# ------------------------------------------------------------------------------
+# Automatically places your Functions close to your backend (database, API, etc.)
+# or close to the user, depending on usage patterns.
+# https://developers.cloudflare.com/workers/configuration/smart-placement/
+[placement]
+mode = "smart"
+
+# ------------------------------------------------------------------------------
+# Compatibility Flags
+# ------------------------------------------------------------------------------
+# Enable modern Node.js compatibility for broader package support in Functions.
+compatibility_flags = ["nodejs_compat"]
+
+# ------------------------------------------------------------------------------
+# Environment Variables (Secrets should be added via Dashboard/CLI, not here)
+# ------------------------------------------------------------------------------
+[vars]
+ENVIRONMENT = "production"
+# NPM_FLAGS = "--no-audit" # optimization for install speed
+
+# ------------------------------------------------------------------------------
+# Bindings (Uncomment and configure as you add features)
+# ------------------------------------------------------------------------------
+
+# [[kv_namespaces]]
+# binding = "CACHE_KV"
+# id = "<YOUR_KV_ID>"
+
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "swara-db"
+# database_id = "<YOUR_DB_ID>"
+
+# [[r2_buckets]]
+# binding = "ASSETS_BUCKET"
+# bucket_name = "swara-assets"
+
+# ------------------------------------------------------------------------------
+# AI Bindings (for Workers AI)
+# ------------------------------------------------------------------------------
+# [ai]
+# binding = "AI"
