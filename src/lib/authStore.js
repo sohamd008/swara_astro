@@ -2,6 +2,7 @@ import { atom } from 'nanostores';
 import { onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
 import { auth } from './firebase';
 
+/** @type {import('nanostores').WritableAtom<any>} */
 export const userStart = atom(null); // null = loading, false = not logged in, object = user
 
 // Subscribe to Firebase Auth state

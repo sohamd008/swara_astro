@@ -65,15 +65,17 @@ import Layout from "../layouts/Layout.astro";
     const logoutBtn = document.getElementById("logout-btn");
     const resetBtn = document.getElementById("reset-pwd-btn");
 
-    userStart.subscribe((user) => {
-        if (user === null) return;
+    userStart.subscribe((val: any) => {
+        if (val === null) return;
 
-        if (!user) {
+        if (!val) {
             window.location.href = "/login";
             return;
         }
 
-        if (profileEmail) profileEmail.textContent = user.email;
+        const user = val; // val is now treated as any
+
+        if (profileEmail) profileEmail.textContent = user.email || "";
         if (profileName)
             profileName.textContent = user.displayName || "Music Lover";
 
@@ -89,9 +91,10 @@ import Layout from "../layouts/Layout.astro";
         }
 
         if (profileAvatar) {
-            profileAvatar.textContent = (user.displayName || user.email)
+            const initial = (user.displayName || user.email || "M")
                 .charAt(0)
                 .toUpperCase();
+            profileAvatar.textContent = initial;
         }
     });
 
