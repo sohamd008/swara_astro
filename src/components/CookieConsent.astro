@@ -1,0 +1,112 @@
+---
+
+---
+
+<div id="cookie-banner" class="cookie-banner" style="display: none;">
+    <div class="cookie-content">
+        <p>
+            We use cookies to ensure you get the best experience on our website
+            and to manage authentication.
+        </p>
+        <button id="accept-cookies" class="accept-btn">Got it!</button>
+    </div>
+</div>
+
+<script>
+    const banner = document.getElementById("cookie-banner");
+    const acceptBtn = document.getElementById("accept-cookies");
+
+    // Check if user has already accepted
+    const cookiesAccepted = localStorage.getItem("cookie_consent");
+
+    if (!cookiesAccepted && banner) {
+        banner.style.display = "flex";
+        // Small delay for animation
+        setTimeout(() => {
+            banner.classList.add("visible");
+        }, 100);
+    }
+
+    acceptBtn?.addEventListener("click", () => {
+        localStorage.setItem("cookie_consent", "true");
+        if (banner) {
+            banner.classList.remove("visible");
+            setTimeout(() => {
+                banner.style.display = "none";
+            }, 300);
+        }
+    });
+</script>
+
+<style>
+    .cookie-banner {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        width: calc(100% - 40px);
+        max-width: 600px;
+        background: rgba(20, 20, 25, 0.95);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 16px 24px;
+        z-index: 10000;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        display: flex; /* overridden by JS */
+        flex-direction: column;
+        gap: 12px;
+        opacity: 0;
+        transition:
+            opacity 0.3s ease,
+            transform 0.3s ease;
+    }
+
+    .cookie-banner.visible {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+
+    .cookie-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    p {
+        margin: 0;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1.5;
+    }
+
+    .accept-btn {
+        background: #fff;
+        color: #000;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 99px;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: transform 0.2s;
+    }
+
+    .accept-btn:hover {
+        transform: scale(1.05);
+    }
+
+    @media (max-width: 480px) {
+        .cookie-content {
+            flex-direction: column;
+            text-align: center;
+            gap: 16px;
+        }
+        .accept-btn {
+            width: 100%;
+        }
+    }
+</style>
