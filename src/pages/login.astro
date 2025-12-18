@@ -36,6 +36,7 @@ import Layout from "../layouts/Layout.astro";
                         type="password"
                         id="password"
                         required
+                        autocomplete="current-password"
                         placeholder="••••••••"
                     />
                 </div>
@@ -54,7 +55,8 @@ import Layout from "../layouts/Layout.astro";
                 <button
                     type="submit"
                     id="submit-btn"
-                    class="login-btn shine-btn">Login</button
+                    class="login-btn shine-btn"
+                    ><span id="btn-text">Login</span></button
                 >
                 <button
                     type="button"
@@ -96,130 +98,180 @@ import Layout from "../layouts/Layout.astro";
         sendPasswordResetEmail,
     } from "firebase/auth";
 
-    const authForm = document.getElementById("auth-form") as HTMLFormElement;
-    const emailInput = document.getElementById("email") as HTMLInputElement;
-    const passInput = document.getElementById("password") as HTMLInputElement;
-    const nameInput = document.getElementById("full-name") as HTMLInputElement;
-    const nameGroup = document.getElementById("name-group");
-    const submitBtn = document.getElementById("submit-btn");
-    const toggleBtn = document.getElementById("toggle-btn");
-    const toggleLabel = document.getElementById("toggle-label");
-    const formTitle = document.getElementById("form-title");
-    const formDesc = document.getElementById("form-desc");
-    const googleBtn = document.getElementById("google-btn");
-    const forgotBtn = document.getElementById("forgot-pass-btn");
+    function initAuth() {
+        const authForm = document.getElementById(
+            "auth-form",
+        ) as HTMLFormElement;
+        const emailInput = document.getElementById("email") as HTMLInputElement;
+        const passInput = document.getElementById(
+            "password",
+        ) as HTMLInputElement;
+        const nameInput = document.getElementById(
+            "full-name",
+        ) as HTMLInputElement;
+        const nameGroup = document.getElementById("name-group");
+        const submitBtn = document.getElementById("submit-btn");
+        const toggleBtn = document.getElementById("toggle-btn");
+        const toggleLabel = document.getElementById("toggle-label");
+        const formTitle = document.getElementById("form-title");
+        const formDesc = document.getElementById("form-desc");
+        const googleBtn = document.getElementById("google-btn");
+        const forgotBtn = document.getElementById("forgot-pass-btn");
+        const btnText = document.getElementById("btn-text");
+        const recaptchaContainer = document.querySelector(".g-recaptcha");
 
-    let isLogin = true;
+        let isLogin = true;
 
-    forgotBtn?.addEventListener("click", async () => {
-        const email = emailInput.value;
-        if (!email) {
-            alert("Please enter your email address first.");
-            return;
-        }
-        try {
-            await sendPasswordResetEmail(auth, email);
-            alert(
-                "Password reset email sent to " +
-                    email +
-                    ". Please check your inbox (and spam folder).",
-            );
-        } catch (error: any) {
-            alert("Error: " + error.message);
-        }
-    });
-
-    toggleBtn?.addEventListener("click", () => {
-        isLogin = !isLogin;
-        if (isLogin) {
-            if (formTitle) formTitle.innerHTML = "Welcome <span>Back</span>";
-            if (formDesc)
-                formDesc.textContent =
-                    "Login to access your personal treasury of music.";
-            if (submitBtn) submitBtn.textContent = "Login";
-            if (toggleLabel) toggleLabel.textContent = "Don't have an account?";
-            if (toggleBtn) toggleBtn.textContent = "Sign Up";
-            if (nameGroup) nameGroup.style.display = "none";
-            if (nameInput) nameInput.required = false;
-        } else {
-            if (formTitle) formTitle.innerHTML = "Create <span>Account</span>";
-            if (formDesc)
-                formDesc.textContent =
-                    "Join Swaramanjusha to start your musical journey.";
-            if (submitBtn) submitBtn.textContent = "Sign Up";
-            if (toggleLabel)
-                toggleLabel.textContent = "Already have an account?";
-            if (toggleBtn) toggleBtn.textContent = "Login";
-            if (nameGroup) nameGroup.style.display = "block";
-            if (nameInput) nameInput.required = true;
-        }
-    });
-
-    authForm?.addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        // 1. Get reCAPTCHA token
-        // @ts-ignore - g-recaptcha is injected by the script
-        const recaptchaToken = (window as any).grecaptcha.getResponse();
-
-        if (!recaptchaToken) {
-            alert("Please complete the reCAPTCHA challenge.");
-            return;
+        // Explicitly render reCAPTCHA if it exists and hasn't been rendered
+        if (recaptchaContainer && (window as any).grecaptcha) {
+            try {
+                (window as any).grecaptcha.render(recaptchaContainer);
+            } catch (e) {
+                // Already rendered or error
+            }
         }
 
-        const email = emailInput.value;
-        const pass = passInput.value;
-        const name = nameInput.value;
+        forgotBtn?.addEventListener("click", async () => {
+            const email = emailInput?.value;
+            if (!email) {
+                alert("Please enter your email address first.");
+                return;
+            }
+            try {
+                await sendPasswordResetEmail(auth, email);
+                alert(
+                    "Password reset email sent to " +
+                        email +
+                        ". Please check your inbox (and spam folder).",
+                );
+            } catch (error: any) {
+                alert("Error: " + error.message);
+            }
+        });
 
-        try {
-            // 2. Verify reCAPTCHA with backend
-            const verifyRes = await fetch("/verify", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ token: recaptchaToken }),
-            });
+        toggleBtn?.addEventListener("click", () => {
+            isLogin = !isLogin;
+            if (isLogin) {
+                if (formTitle)
+                    formTitle.innerHTML = "Welcome <span>Back</span>";
+                if (formDesc)
+                    formDesc.textContent =
+                        "Login to access your personal treasury of music.";
+                if (btnText) btnText.textContent = "Login";
+                if (toggleLabel)
+                    toggleLabel.textContent = "Don't have an account?";
+                if (toggleBtn) toggleBtn.textContent = "Sign Up";
+                if (nameGroup) nameGroup.style.display = "none";
+                if (nameInput) nameInput.required = false;
+            } else {
+                if (formTitle)
+                    formTitle.innerHTML = "Create <span>Account</span>";
+                if (formDesc)
+                    formDesc.textContent =
+                        "Join Swaramanjusha to start your musical journey.";
+                if (btnText) btnText.textContent = "Sign Up";
+                if (toggleLabel)
+                    toggleLabel.textContent = "Already have an account?";
+                if (toggleBtn) toggleBtn.textContent = "Login";
+                if (nameGroup) nameGroup.style.display = "block";
+                if (nameInput) nameInput.required = true;
+            }
+        });
 
-            const verifyData = await verifyRes.json();
+        function setSubmitting(loading: boolean) {
+            const btnText = document.getElementById("btn-text");
+            if (submitBtn) {
+                (submitBtn as HTMLButtonElement).disabled = loading;
+                submitBtn.style.opacity = loading ? "0.7" : "1";
+            }
+            if (btnText) {
+                btnText.textContent = loading
+                    ? isLogin
+                        ? "Logging in..."
+                        : "Signing up..."
+                    : isLogin
+                      ? "Login"
+                      : "Sign Up";
+            }
+        }
 
-            if (!verifyData.success) {
-                alert("reCAPTCHA verification failed. Please try again.");
-                // @ts-ignore
-                (window as any).grecaptcha.reset();
+        authForm?.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            // 1. Get reCAPTCHA token
+            let recaptchaToken = "";
+            try {
+                recaptchaToken = (window as any).grecaptcha.getResponse();
+            } catch (err) {
+                console.error("reCAPTCHA failed to get response", err);
+            }
+
+            if (!recaptchaToken) {
+                alert("Please complete the reCAPTCHA challenge.");
                 return;
             }
 
-            // 3. Proceed with Firebase Auth
-            if (isLogin) {
-                await signInWithEmailAndPassword(auth, email, pass);
-            } else {
-                const userCredential = await createUserWithEmailAndPassword(
-                    auth,
-                    email,
-                    pass,
-                );
-                if (name) {
-                    await updateProfile(userCredential.user, {
-                        displayName: name,
-                    });
-                }
-            }
-            window.location.href = "/profile";
-        } catch (error: any) {
-            alert(error.message);
-            // @ts-ignore
-            if ((window as any).grecaptcha) (window as any).grecaptcha.reset();
-        }
-    });
+            setSubmitting(true);
 
-    googleBtn?.addEventListener("click", async () => {
-        const provider = new GoogleAuthProvider();
-        try {
-            await signInWithPopup(auth, provider);
-            window.location.href = "/profile";
-        } catch (error: any) {
-            alert(error.message);
-        }
-    });
+            const email = emailInput.value;
+            const pass = passInput.value;
+            const name = nameInput.value;
+
+            try {
+                // 2. Verify reCAPTCHA with backend
+                const verifyRes = await fetch("/verify", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ token: recaptchaToken }),
+                });
+
+                const verifyData = await verifyRes.json();
+
+                if (!verifyData.success) {
+                    alert("reCAPTCHA verification failed. Please try again.");
+                    (window as any).grecaptcha.reset();
+                    setSubmitting(false);
+                    return;
+                }
+
+                // 3. Proceed with Firebase Auth
+                if (isLogin) {
+                    await signInWithEmailAndPassword(auth, email, pass);
+                } else {
+                    const userCredential = await createUserWithEmailAndPassword(
+                        auth,
+                        email,
+                        pass,
+                    );
+                    if (name) {
+                        await updateProfile(userCredential.user, {
+                            displayName: name,
+                        });
+                    }
+                }
+                window.location.href = "/profile";
+            } catch (error: any) {
+                alert(error.message);
+                if ((window as any).grecaptcha)
+                    (window as any).grecaptcha.reset();
+                setSubmitting(false);
+            }
+        });
+
+        googleBtn?.addEventListener("click", async () => {
+            const provider = new GoogleAuthProvider();
+            try {
+                await signInWithPopup(auth, provider);
+                window.location.href = "/profile";
+            } catch (error: any) {
+                alert(error.message);
+            }
+        });
+    }
+
+    // Initialize on load and on transition
+    initAuth();
+    document.addEventListener("astro:page-load", initAuth);
 </script>
 
 <style>

@@ -2,7 +2,12 @@
 // Player.astro - Clean Rewrite
 ---
 
-<div id="swara-player" class="swara-player glass-panel" style="display: none;">
+<div
+    id="swara-player"
+    class="swara-player glass-panel"
+    style="display: none;"
+    transition:persist
+>
     <div class="swara-player-inner">
         <!-- Ambient Glow -->
         <div class="swara-glow"></div>
@@ -150,7 +155,7 @@
     </div>
 </div>
 
-<audio id="swara-audio-el"></audio>
+<audio id="swara-audio-el" transition:persist></audio>
 
 <script>
     import {
@@ -163,107 +168,115 @@
         showPlayer,
     } from "../lib/playerStore";
 
-    const container = document.getElementById("swara-player");
-    const audio = document.getElementById("swara-audio-el") as HTMLAudioElement;
+    function initPlayer() {
+        const container = document.getElementById("swara-player");
+        const audio = document.getElementById(
+            "swara-audio-el",
+        ) as HTMLAudioElement;
 
-    // UI Elements
-    const playBtn = document.getElementById("swara-play-toggle");
-    const playIcon = document.getElementById("swara-play-icon");
-    const pauseIcon = document.getElementById("swara-pause-icon");
-    const titleEl = document.getElementById("swara-title");
-    const artistEl = document.getElementById("swara-artist");
-    const imgEl = document.getElementById("swara-img") as HTMLImageElement;
-    const waveform = document.getElementById("swara-waveform");
+        // UI Elements
+        const playBtn = document.getElementById("swara-play-toggle");
+        const playIcon = document.getElementById("swara-play-icon");
+        const pauseIcon = document.getElementById("swara-pause-icon");
+        const titleEl = document.getElementById("swara-title");
+        const artistEl = document.getElementById("swara-artist");
+        const imgEl = document.getElementById("swara-img") as HTMLImageElement;
+        const waveform = document.getElementById("swara-waveform");
 
-    const progressFill = document.getElementById("swara-progress-fill");
-    const progressBg = document.getElementById("swara-progress-bg");
-    const currTimeEl = document.getElementById("swara-time-curr");
-    const totalTimeEl = document.getElementById("swara-time-total");
+        const progressFill = document.getElementById("swara-progress-fill");
+        const progressBg = document.getElementById("swara-progress-bg");
+        const currTimeEl = document.getElementById("swara-time-curr");
+        const totalTimeEl = document.getElementById("swara-time-total");
 
-    const volSlider = document.getElementById(
-        "swara-vol-slider",
-    ) as HTMLInputElement;
-    const nextBtn = document.getElementById("swara-next");
-    const prevBtn = document.getElementById("swara-prev");
-    const fwdBtn = document.getElementById("swara-forward");
-    const rwdBtn = document.getElementById("swara-rewind");
+        const volSlider = document.getElementById(
+            "swara-vol-slider",
+        ) as HTMLInputElement;
+        const nextBtn = document.getElementById("swara-next");
+        const prevBtn = document.getElementById("swara-prev");
+        const fwdBtn = document.getElementById("swara-forward");
+        const rwdBtn = document.getElementById("swara-rewind");
 
-    // -- Subscriptions --
+        if (!audio) return; // Wait for existence
 
-    showPlayer.subscribe((show) => {
-        if (container) container.style.display = show ? "block" : "none";
-    });
+        // -- Subscriptions --
 
-    currentTrack.subscribe((trackData) => {
-        const track = trackData as any;
-        if (track && audio && titleEl && artistEl) {
-            if (audio.src !== track.url) {
-                audio.src = track.url;
-                audio.play().catch((e) => console.log("Auto-play prevented"));
+        showPlayer.subscribe((show) => {
+            if (container) container.style.display = show ? "block" : "none";
+        });
+
+        currentTrack.subscribe((trackData) => {
+            const track = trackData as any;
+            if (track && audio && titleEl && artistEl) {
+                if (audio.src !== track.url) {
+                    audio.src = track.url;
+                    audio
+                        .play()
+                        .catch((e) => console.log("Auto-play prevented"));
+                }
+                titleEl.textContent = track.title;
+                artistEl.textContent = track.artist;
+                if (imgEl) {
+                    imgEl.src = track.image || "/logo.jpg";
+                }
             }
-            titleEl.textContent = track.title;
-            artistEl.textContent = track.artist;
-            if (imgEl) {
-                imgEl.src = track.image || "/logo.jpg";
+        });
+
+        isPlaying.subscribe((playing) => {
+            if (!audio) return;
+
+            if (playing) {
+                audio.play().catch(() => {});
+                if (playIcon) playIcon.style.display = "none";
+                if (pauseIcon) pauseIcon.style.display = "block";
+                if (waveform) waveform.style.opacity = "1";
+            } else {
+                audio.pause();
+                if (playIcon) playIcon.style.display = "block";
+                if (pauseIcon) pauseIcon.style.display = "none";
+                if (waveform) waveform.style.opacity = "0";
             }
-        }
-    });
+        });
 
-    isPlaying.subscribe((playing) => {
-        if (!audio) return;
+        // -- Event Listeners --
 
-        if (playing) {
-            audio.play().catch(() => {});
-            if (playIcon) playIcon.style.display = "none";
-            if (pauseIcon) pauseIcon.style.display = "block";
-            if (waveform) waveform.style.opacity = "1";
-        } else {
-            audio.pause();
-            if (playIcon) playIcon.style.display = "block";
-            if (pauseIcon) pauseIcon.style.display = "none";
-            if (waveform) waveform.style.opacity = "0";
-        }
-    });
+        playBtn?.addEventListener("click", () => togglePlay());
+        nextBtn?.addEventListener("click", () => nextTrack());
+        prevBtn?.addEventListener("click", () => prevTrack());
 
-    // -- Event Listeners --
+        fwdBtn?.addEventListener("click", () => {
+            if (audio) audio.currentTime += 15;
+        });
+        rwdBtn?.addEventListener("click", () => {
+            if (audio) audio.currentTime -= 15;
+        });
 
-    playBtn?.addEventListener("click", () => togglePlay());
-    nextBtn?.addEventListener("click", () => nextTrack());
-    prevBtn?.addEventListener("click", () => prevTrack());
+        audio?.addEventListener("timeupdate", () => {
+            if (audio.duration) {
+                const pct = (audio.currentTime / audio.duration) * 100;
+                if (progressFill) progressFill.style.width = `${pct}%`;
+                if (currTimeEl)
+                    currTimeEl.textContent = formatTime(audio.currentTime);
+                if (totalTimeEl)
+                    totalTimeEl.textContent = formatTime(audio.duration);
+            }
+        });
 
-    fwdBtn?.addEventListener("click", () => {
-        if (audio) audio.currentTime += 15;
-    });
-    rwdBtn?.addEventListener("click", () => {
-        if (audio) audio.currentTime -= 15;
-    });
+        progressBg?.addEventListener("click", (e) => {
+            if (audio && progressBg) {
+                const rect = progressBg.getBoundingClientRect();
+                const pos = (e.clientX - rect.left) / rect.width;
+                audio.currentTime = pos * audio.duration;
+            }
+        });
 
-    audio?.addEventListener("timeupdate", () => {
-        if (audio.duration) {
-            const pct = (audio.currentTime / audio.duration) * 100;
-            if (progressFill) progressFill.style.width = `${pct}%`;
-            if (currTimeEl)
-                currTimeEl.textContent = formatTime(audio.currentTime);
-            if (totalTimeEl)
-                totalTimeEl.textContent = formatTime(audio.duration);
-        }
-    });
+        volSlider?.addEventListener("input", () => {
+            const val = parseInt(volSlider.value) / 100;
+            audio.volume = val;
+            volume.set(val);
+        });
 
-    progressBg?.addEventListener("click", (e) => {
-        if (audio && progressBg) {
-            const rect = progressBg.getBoundingClientRect();
-            const pos = (e.clientX - rect.left) / rect.width;
-            audio.currentTime = pos * audio.duration;
-        }
-    });
-
-    volSlider?.addEventListener("input", () => {
-        const val = parseInt(volSlider.value) / 100;
-        audio.volume = val;
-        volume.set(val);
-    });
-
-    audio?.addEventListener("ended", () => nextTrack());
+        audio?.addEventListener("ended", () => nextTrack());
+    }
 
     function formatTime(sec: number) {
         if (!sec || isNaN(sec)) return "0:00";
@@ -271,6 +284,10 @@
         const s = Math.floor(sec % 60);
         return `${m}:${s.toString().padStart(2, "0")}`;
     }
+
+    // Initialize
+    initPlayer();
+    document.addEventListener("astro:page-load", initPlayer);
 </script>
 
 <style>

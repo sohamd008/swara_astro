@@ -1,7 +1,7 @@
 ---
 name: "Pandit Bhimsen Joshi"
 bio: "Pandit Bhimsen Gururaj Joshi was a legendary Indian vocalist from Karnataka, in the Hindustani classical tradition. He is known for the khayal form of singing, as well as for his popular renditions of devotional music."
-image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Bhimsen_Joshi.jpg/440px-Bhimsen_Joshi.jpg"
+image: "/logo.jpg"
 songs:
   - id: "bhimsen-01"
     title: "Raag Bhimpalasi - Vilambit"
