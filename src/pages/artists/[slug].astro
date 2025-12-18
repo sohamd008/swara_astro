@@ -107,6 +107,10 @@ const songs = artist.data.songs;
     userStart.subscribe((user) => {
         currentUser = user;
         // Update UI state for download buttons
+        updateDownloadButtons(user);
+    });
+
+    function updateDownloadButtons(user: any) {
         const downloadBtns = document.querySelectorAll(".download-btn");
         downloadBtns.forEach((btn) => {
             if (user) {
@@ -116,55 +120,74 @@ const songs = artist.data.songs;
             } else {
                 (btn as HTMLElement).style.opacity = "0.6";
                 btn.setAttribute("title", "Login to Download");
-                // Optional: Change icon to lock
                 btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`;
             }
         });
-    });
+    }
 
-    const artistName = (document.querySelector(".hero-title") as HTMLElement)
-        ?.innerText;
-    const songItems = Array.from(document.querySelectorAll(".play-btn")).map(
-        (btn) => ({
+    // Initial check (in case subscription fired before DOM ready, though unlikely with script placement)
+    // Actually best to re-run on astro:page-load for ViewTransitions
+
+    const initPage = () => {
+        const artistName = (
+            document.querySelector(".hero-title") as HTMLElement
+        )?.innerText;
+        const songItems = Array.from(
+            document.querySelectorAll(".play-btn"),
+        ).map((btn) => ({
             url: btn.getAttribute("data-url") || "",
             title: btn.getAttribute("data-title") || "",
             artist: artistName || "Unknown Artist",
-        }),
-    );
+        }));
 
-    const playBtns = document.querySelectorAll(".play-btn");
-    playBtns.forEach((btn, index) => {
-        btn.addEventListener("click", () => {
-            playCollection(songItems, index);
+        const playBtns = document.querySelectorAll(".play-btn");
+        // Remove old listeners? With Astro ViewTransitions, if the body is replaced, we don't need to remove.
+        // Elements are fresh.
+        playBtns.forEach((btn, index) => {
+            // Clone to strip old listeners if elements were persisted (rare in default mode)
+            // Just adding one click handler via property is safest for no-buildup.
+            (btn as HTMLElement).onclick = () => {
+                playCollection(songItems, index);
+            };
         });
-    });
 
-    const downloadBtns = document.querySelectorAll(".download-btn");
-    downloadBtns.forEach((btn) => {
-        btn.addEventListener("click", async () => {
-            if (!currentUser) {
-                alert("Please login to download files.");
-                window.location.href = "/login";
-                return;
-            }
+        const downloadBtns = document.querySelectorAll(".download-btn");
+        downloadBtns.forEach((btn) => {
+            (btn as HTMLElement).onclick = (e) => {
+                // Check store DIRECTLY at moment of click to avoid stale closure state
+                const user = userStart.get();
 
-            const url = btn.getAttribute("data-url");
-            if (url) {
-                try {
-                    const link = document.createElement("a");
-                    link.href = url;
-                    // For GitHub/Remote files, target="_blank" is safer to ensure it doesn't navigate away
-                    link.target = "_blank";
-                    link.setAttribute("download", "");
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                } catch (e) {
-                    alert("Error initiating download: " + e);
+                if (!user) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    alert("Please login to download files.");
+                    window.location.href = "/login";
+                    return;
                 }
-            }
+
+                const url = btn.getAttribute("data-url");
+                if (url) {
+                    try {
+                        const link = document.createElement("a");
+                        link.href = url;
+                        link.target = "_blank";
+                        link.setAttribute("download", "");
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    } catch (err) {
+                        alert("Error initiating download: " + err);
+                    }
+                }
+            };
         });
-    });
+
+        // Sync UI with current store state
+        updateDownloadButtons(userStart.get());
+    };
+
+    initPage();
+    document.addEventListener("astro:page-load", initPage);
 </script>
 
 <style>
