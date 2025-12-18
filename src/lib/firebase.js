@@ -2,13 +2,13 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDVkYwIg3NdupN_BUNBhNItU2us-0t2SzU",
-    authDomain: "swaramanjusha-login.firebaseapp.com",
-    projectId: "swaramanjusha-login",
-    storageBucket: "swaramanjusha-login.firebasestorage.app",
-    messagingSenderId: "134597685600",
-    appId: "1:134597685600:web:9e2410aadf376082d2ae05",
-    measurementId: "G-ZBBD3YZMS4"
+    apiKey: import.meta.env.PUBLIC_FIREBASE_API_KEY,
+    authDomain: import.meta.env.PUBLIC_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.PUBLIC_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.PUBLIC_FIREBASE_APP_ID,
+    measurementId: import.meta.env.PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase
