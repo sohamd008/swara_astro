@@ -1,0 +1,95 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Page Not Found">
+    <div class="error-container">
+        <div class="error-card glass">
+            <div class="error-icon">🌌</div>
+            <h1 class="gradient-text">404</h1>
+            <h2>Lost in Melody</h2>
+            <p>
+                The raga you are looking for seems to have faded into the
+                silence. Let's get you back to the main performance.
+            </p>
+            <a href="/" class="btn btn-solid shine-btn">Return Home</a>
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .error-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 70vh;
+        width: 100%;
+        padding: 20px;
+    }
+
+    .error-card {
+        max-width: 500px;
+        width: 100%;
+        padding: 60px 40px;
+        text-align: center;
+        border-radius: 32px;
+        background: var(--glass-fill);
+        border: 1px solid var(--glass-border);
+        backdrop-filter: blur(20px);
+    }
+
+    .error-icon {
+        font-size: 64px;
+        margin-bottom: 20px;
+    }
+
+    h1 {
+        font-size: 80px;
+        font-weight: 800;
+        margin: 0;
+        line-height: 1;
+    }
+
+    h2 {
+        font-size: 24px;
+        color: var(--text-primary);
+        margin: 10px 0 20px;
+    }
+
+    p {
+        font-size: 16px;
+        color: var(--text-secondary);
+        line-height: 1.6;
+        margin-bottom: 40px;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 54px;
+        padding: 0 40px;
+        background: linear-gradient(135deg, var(--accent-color), #ff4757);
+        color: white;
+        text-decoration: none;
+        border-radius: 27px;
+        font-weight: 600;
+        transition:
+            transform 0.2s,
+            box-shadow 0.2s;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(255, 45, 85, 0.4);
+    }
+
+    @media (max-width: 480px) {
+        .error-card {
+            padding: 40px 20px;
+        }
+        h1 {
+            font-size: 60px;
+        }
+    }
+</style>
