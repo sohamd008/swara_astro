@@ -1,5 +1,5 @@
 ---
-// Player.astro - Clean Rewrite
+// Player.astro - Robust Singleton & Liquid Glass UI
 ---
 
 <div
@@ -8,46 +8,40 @@
     style="display: none;"
     transition:persist
 >
-    <div class="swara-player-inner">
-        <!-- Ambient Glow -->
-        <div class="swara-glow"></div>
+    <!-- Background Glow -->
+    <div class="swara-glow"></div>
 
+    <div class="swara-player-inner">
+        <!-- Layout Grid -->
         <div class="swara-layout">
-            <!-- Track Info -->
-            <div class="swara-meta-section">
-                <div class="swara-art-container">
+            <!-- 1. Meta (Art + Info) -->
+            <div class="swara-meta">
+                <div class="swara-art-wrapper">
                     <img
                         src="/logo.jpg"
-                        alt="Artwork"
+                        alt="Album Art"
                         id="swara-img"
-                        class="swara-artwork"
+                        class="swara-art"
                     />
-                    <!-- Waveform Overlay -->
-                    <div
-                        id="swara-waveform"
-                        class="waveform"
-                        style="position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.3s;"
-                    >
-                        <div class="bar"></div>
-                        <div class="bar"></div>
-                        <div class="bar"></div>
+                    <div id="swara-wave-anim" class="swara-wave-anim">
+                        <span></span><span></span><span></span>
                     </div>
                 </div>
-                <div class="swara-text-content">
-                    <div class="swara-title-mask">
-                        <h4 id="swara-title" class="swara-title">
-                            Select a Track
-                        </h4>
-                    </div>
-                    <p id="swara-artist" class="swara-artist">Swaramanjusha</p>
+                <div class="swara-info">
+                    <h3 id="swara-title" class="swara-track-title">
+                        Select a Track
+                    </h3>
+                    <p id="swara-artist" class="swara-track-artist">
+                        Swaramanjusha
+                    </p>
                 </div>
             </div>
 
-            <!-- Controls -->
-            <div class="swara-controls-section">
-                <div class="swara-btn-group">
+            <!-- 2. Controls (Central) -->
+            <div class="swara-controls">
+                <div class="swara-buttons">
                     <button
-                        class="swara-icon-btn"
+                        class="swara-btn"
                         id="swara-prev"
                         title="Previous"
                         aria-label="Previous Track"
@@ -56,65 +50,69 @@
                             ><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"></path></svg
                         >
                     </button>
+                    <!-- Rewind 10s -->
                     <button
-                        class="swara-icon-btn swara-skip-btn"
-                        id="swara-rewind"
-                        title="Rewind 15s"
-                        aria-label="Rewind 15 seconds"
+                        class="swara-btn swara-skip"
+                        id="swara-rw"
+                        title="Rewind 10s"
+                        aria-label="Rewind 10 seconds"
                     >
                         <svg
                             viewBox="0 0 24 24"
                             fill="none"
                             stroke="currentColor"
                             stroke-width="2"
-                            ><path d="M11 17l-5-5 5-5m-7 5h16"></path></svg
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            ><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"
+                            ></path></svg
                         >
                     </button>
 
                     <button
-                        class="swara-play-trigger"
-                        id="swara-play-toggle"
+                        class="swara-play-btn"
+                        id="swara-toggle"
                         title="Play/Pause"
                         aria-label="Toggle Playback"
                     >
-                        <div class="swara-play-circle">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="currentColor"
-                                id="swara-play-icon"
-                                class="swara-play-svg"
-                            >
-                                <path d="M8 5v14l11-7z"></path>
-                            </svg>
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="currentColor"
-                                id="swara-pause-icon"
-                                class="swara-play-svg"
-                                style="display: none;"
-                            >
-                                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"
-                                ></path>
-                            </svg>
-                        </div>
+                        <!-- Play Icon -->
+                        <svg
+                            id="swara-icon-play"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                        >
+                            <path d="M8 5v14l11-7z"></path>
+                        </svg>
+                        <!-- Pause Icon -->
+                        <svg
+                            id="swara-icon-pause"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            style="display: none;"
+                        >
+                            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path>
+                        </svg>
                     </button>
 
+                    <!-- Forward 10s -->
                     <button
-                        class="swara-icon-btn swara-skip-btn"
-                        id="swara-forward"
-                        title="Forward 15s"
-                        aria-label="Forward 15 seconds"
+                        class="swara-btn swara-skip"
+                        id="swara-fw"
+                        title="Forward 10s"
+                        aria-label="Forward 10 seconds"
                     >
                         <svg
                             viewBox="0 0 24 24"
                             fill="none"
                             stroke="currentColor"
                             stroke-width="2"
-                            ><path d="M13 17l5-5-5-5M4 12h16"></path></svg
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            ><path d="M13 17l5-5-5-5M6 17l5-5-5-5"></path></svg
                         >
                     </button>
                     <button
-                        class="swara-icon-btn"
+                        class="swara-btn"
                         id="swara-next"
                         title="Next"
                         aria-label="Next Track"
@@ -126,514 +124,553 @@
                     </button>
                 </div>
 
-                <div class="swara-scrub-area">
-                    <span class="swara-time" id="swara-time-curr">0:00</span>
-                    <div class="swara-progress-track" id="swara-progress-bg">
+                <div class="swara-progress-container">
+                    <span id="swara-curr-time" class="swara-time">0:00</span>
+                    <div id="swara-progress-bar" class="swara-progress-bar">
                         <div
-                            class="swara-progress-fill"
                             id="swara-progress-fill"
+                            class="swara-progress-fill"
                         >
-                            <div class="swara-progress-handle"></div>
                         </div>
                     </div>
-                    <span class="swara-time" id="swara-time-total">0:00</span>
+                    <span id="swara-total-time" class="swara-time">0:00</span>
                 </div>
             </div>
 
-            <!-- Volume -->
-            <div class="swara-volume-section">
-                <div class="swara-volume-wrap">
-                    <button
-                        class="swara-icon-btn small"
-                        aria-label="Volume Control"
-                    >
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path
-                                d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"
-                            ></path>
-                        </svg>
-                    </button>
-                    <input
-                        type="range"
-                        id="swara-vol-slider"
-                        class="swara-slider"
-                        min="0"
-                        max="100"
-                        value="80"
-                    />
-                </div>
+            <!-- 3. Volume (Right) -->
+            <div class="swara-volume">
+                <button class="swara-btn small" aria-label="Mute/Unmute">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"
+                        ></path>
+                    </svg>
+                </button>
+                <input
+                    type="range"
+                    id="swara-vol"
+                    class="swara-range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value="0.8"
+                    aria-label="Volume Slider"
+                />
             </div>
         </div>
     </div>
 </div>
 
-<audio id="swara-audio-el" transition:persist></audio>
+<audio id="swara-audio" transition:persist></audio>
 
 <script>
     import {
         isPlaying,
         currentTrack,
         volume,
+        showPlayer,
         togglePlay,
         nextTrack,
         prevTrack,
-        showPlayer,
     } from "../lib/playerStore";
 
-    function initPlayer() {
-        const container = document.getElementById("swara-player");
-        const audio = document.getElementById(
-            "swara-audio-el",
-        ) as HTMLAudioElement;
+    // SINGLETON PATTERN: Use a global flag to prevent double-initialization
+    // persistent components stay in DOM, so we only need to init once.
+    if (!(window as any)._swaraPlayerInitialized) {
+        (window as any)._swaraPlayerInitialized = true;
 
-        // UI Elements
-        const playBtn = document.getElementById("swara-play-toggle");
-        const playIcon = document.getElementById("swara-play-icon");
-        const pauseIcon = document.getElementById("swara-pause-icon");
+        console.log("Initializing Swara Player (Singleton)...");
+
+        const audio = document.getElementById(
+            "swara-audio",
+        ) as HTMLAudioElement;
+        const playerContainer = document.getElementById("swara-player");
+
+        // UI Refs
+        const toggleBtn = document.getElementById("swara-toggle");
+        const iconPlay = document.getElementById("swara-icon-play");
+        const iconPause = document.getElementById("swara-icon-pause");
+        const nextBtn = document.getElementById("swara-next");
+        const prevBtn = document.getElementById("swara-prev");
+        const rwBtn = document.getElementById("swara-rw");
+        const fwBtn = document.getElementById("swara-fw");
+
         const titleEl = document.getElementById("swara-title");
         const artistEl = document.getElementById("swara-artist");
         const imgEl = document.getElementById("swara-img") as HTMLImageElement;
-        const waveform = document.getElementById("swara-waveform");
+        const waveAnim = document.getElementById("swara-wave-anim");
 
+        const progressBar = document.getElementById("swara-progress-bar");
         const progressFill = document.getElementById("swara-progress-fill");
-        const progressBg = document.getElementById("swara-progress-bg");
-        const currTimeEl = document.getElementById("swara-time-curr");
-        const totalTimeEl = document.getElementById("swara-time-total");
-
-        const volSlider = document.getElementById(
-            "swara-vol-slider",
+        const currTimeEl = document.getElementById("swara-curr-time");
+        const totalTimeEl = document.getElementById("swara-total-time");
+        const volInput = document.getElementById(
+            "swara-vol",
         ) as HTMLInputElement;
-        const nextBtn = document.getElementById("swara-next");
-        const prevBtn = document.getElementById("swara-prev");
-        const fwdBtn = document.getElementById("swara-forward");
-        const rwdBtn = document.getElementById("swara-rewind");
 
-        if (!audio) return; // Wait for existence
+        // --- Store Subscriptions ---
 
-        // -- Subscriptions --
-
-        showPlayer.subscribe((show) => {
-            if (container) container.style.display = show ? "block" : "none";
-        });
-
-        currentTrack.subscribe((trackData) => {
-            const track = trackData as any;
-            if (track && audio && titleEl && artistEl) {
-                if (audio.src !== track.url) {
-                    audio.src = track.url;
-                    audio
-                        .play()
-                        .catch((e) => console.log("Auto-play prevented"));
-                }
-                titleEl.textContent = track.title;
-                artistEl.textContent = track.artist;
-                if (imgEl) {
-                    imgEl.src = track.image || "/logo.jpg";
+        // 1. Visibility
+        showPlayer.subscribe((visible) => {
+            if (playerContainer) {
+                // Ensure valid display value
+                if (visible) {
+                    playerContainer.style.display = "block";
+                    // Small delay to allow display:block to apply before transition?
+                    // But we just use standard display here for simplicity first.
+                } else {
+                    playerContainer.style.display = "none";
                 }
             }
         });
 
+        // 2. Track Updates
+        currentTrack.subscribe((track: any) => {
+            if (!track || !audio) return;
+
+            // Only update src if different to prevent reloading
+            if (audio.src !== track.url) {
+                audio.src = track.url;
+                // Autoplay on track change
+                audio.play().catch((e) => console.warn("Autoplay blocked", e));
+            }
+
+            // Update UI
+            if (titleEl) titleEl.innerText = track.title || "Unknown Title";
+            if (artistEl) artistEl.innerText = track.artist || "Unknown Artist";
+            if (imgEl) imgEl.src = track.image || "/logo.jpg";
+
+            // Ensure visual state matches
+            isPlaying.set(true);
+        });
+
+        // 3. Volume
+        volume.subscribe((vol) => {
+            if (audio) audio.volume = vol;
+        });
+
+        // 4. Play/Pause State
         isPlaying.subscribe((playing) => {
             if (!audio) return;
 
             if (playing) {
-                audio.play().catch(() => {});
-                if (playIcon) playIcon.style.display = "none";
-                if (pauseIcon) pauseIcon.style.display = "block";
-                if (waveform) waveform.style.opacity = "1";
+                audio.play().catch(() => {}); // handle promise
+                if (iconPlay) iconPlay.style.display = "none";
+                if (iconPause) iconPause.style.display = "block";
+                if (waveAnim) waveAnim.style.opacity = "1";
             } else {
                 audio.pause();
-                if (playIcon) playIcon.style.display = "block";
-                if (pauseIcon) pauseIcon.style.display = "none";
-                if (waveform) waveform.style.opacity = "0";
+                if (iconPlay) iconPlay.style.display = "block";
+                if (iconPause) iconPause.style.display = "none";
+                if (waveAnim) waveAnim.style.opacity = "0";
             }
         });
 
-        // -- Event Listeners --
+        // --- Event Listeners (Bound ONCE) ---
 
-        playBtn?.addEventListener("click", () => togglePlay());
-        nextBtn?.addEventListener("click", () => nextTrack());
-        prevBtn?.addEventListener("click", () => prevTrack());
-
-        fwdBtn?.addEventListener("click", () => {
-            if (audio) audio.currentTime += 15;
-        });
-        rwdBtn?.addEventListener("click", () => {
-            if (audio) audio.currentTime -= 15;
+        // Controls
+        toggleBtn?.addEventListener("click", (e) => {
+            e.stopPropagation();
+            togglePlay();
         });
 
-        audio?.addEventListener("timeupdate", () => {
-            if (audio.duration) {
-                const pct = (audio.currentTime / audio.duration) * 100;
-                if (progressFill) progressFill.style.width = `${pct}%`;
-                if (currTimeEl)
-                    currTimeEl.textContent = formatTime(audio.currentTime);
-                if (totalTimeEl)
-                    totalTimeEl.textContent = formatTime(audio.duration);
-            }
+        nextBtn?.addEventListener("click", (e) => {
+            e.stopPropagation();
+            nextTrack();
+        });
+        prevBtn?.addEventListener("click", (e) => {
+            e.stopPropagation();
+            prevTrack();
         });
 
-        progressBg?.addEventListener("click", (e) => {
-            if (audio && progressBg) {
-                const rect = progressBg.getBoundingClientRect();
-                const pos = (e.clientX - rect.left) / rect.width;
-                audio.currentTime = pos * audio.duration;
-            }
+        rwBtn?.addEventListener("click", () => {
+            if (audio) audio.currentTime -= 10;
+        });
+        fwBtn?.addEventListener("click", () => {
+            if (audio) audio.currentTime += 10;
         });
 
-        volSlider?.addEventListener("input", () => {
-            const val = parseInt(volSlider.value) / 100;
-            audio.volume = val;
+        // Progress scrubbing
+        progressBar?.addEventListener("click", (e) => {
+            if (!audio) return;
+            const rect = progressBar.getBoundingClientRect();
+            const percent = (e.clientX - rect.left) / rect.width;
+            audio.currentTime = percent * audio.duration;
+        });
+
+        // Volume
+        volInput?.addEventListener("input", (e) => {
+            const val = parseFloat((e.target as HTMLInputElement).value);
             volume.set(val);
         });
 
-        audio?.addEventListener("ended", () => nextTrack());
+        // Audio Internal Events (Sync back to store)
+        if (audio) {
+            audio.addEventListener("timeupdate", () => {
+                if (!Number.isFinite(audio.duration)) return;
+
+                const percent = (audio.currentTime / audio.duration) * 100;
+                if (progressFill) progressFill.style.width = `${percent}%`;
+
+                if (currTimeEl)
+                    currTimeEl.innerText = formatTime(audio.currentTime);
+                if (totalTimeEl)
+                    totalTimeEl.innerText = formatTime(audio.duration);
+            });
+
+            audio.addEventListener("ended", () => {
+                nextTrack();
+            });
+
+            // Native play/pause (e.g. keyboard keys) sync
+            audio.addEventListener("play", () => isPlaying.set(true));
+            audio.addEventListener("pause", () => isPlaying.set(false));
+        }
     }
 
-    function formatTime(sec: number) {
-        if (!sec || isNaN(sec)) return "0:00";
-        const m = Math.floor(sec / 60);
-        const s = Math.floor(sec % 60);
+    function formatTime(seconds: number) {
+        if (!seconds || isNaN(seconds)) return "0:00";
+        const m = Math.floor(seconds / 60);
+        const s = Math.floor(seconds % 60);
         return `${m}:${s.toString().padStart(2, "0")}`;
     }
-
-    // Initialize
-    initPlayer();
-    document.addEventListener("astro:page-load", initPlayer);
 </script>
 
 <style>
-    /* Using 'swara-' prefix to prevent AdBlockers from targeting generic 'music-player' */
+    .glass-panel {
+        background: rgba(20, 20, 25, 0.85);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+        border-left: 1px solid rgba(255, 255, 255, 0.05);
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
+        box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+    }
 
     .swara-player {
         position: fixed;
-        bottom: 24px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 95%;
-        max-width: 1000px;
-        z-index: 10000;
-        pointer-events: auto;
-        padding: 4px;
-        transition:
-            transform 0.3s ease,
-            opacity 0.3s ease;
-    }
-
-    .glass-panel {
-        background: rgba(18, 18, 22, 0.85);
-        backdrop-filter: blur(50px) saturate(180%);
-        -webkit-backdrop-filter: blur(50px) saturate(180%);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        box-shadow:
-            0 20px 40px -10px rgba(0, 0, 0, 0.6),
-            0 0 100px -20px rgba(0, 0, 0, 0.5);
-        border-radius: 24px;
-    }
-
-    .swara-player-inner {
-        position: relative;
-        overflow: hidden;
-        border-radius: 20px;
-        padding: 12px 24px;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        z-index: 9999;
+        padding-bottom: env(safe-area-inset-bottom);
     }
 
     .swara-glow {
         position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(
-            circle,
-            var(--accent-color) 0%,
-            transparent 70%
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            var(--accent-color, #ff4757),
+            transparent
         );
-        opacity: 0.08;
-        transform: translate(-50%, -50%);
-        pointer-events: none;
+        opacity: 0.5;
+    }
+
+    .swara-player-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 12px 24px;
     }
 
     .swara-layout {
         display: grid;
-        grid-template-columns: 280px 1fr 200px;
+        grid-template-columns: 250px 1fr 200px; /* Meta - Controls - Volume */
         align-items: center;
-        gap: 32px;
-        position: relative;
-        z-index: 2;
+        gap: 24px;
     }
 
-    /* --- Meta Section --- */
-    .swara-meta-section {
+    /* --- 1. Meta --- */
+    .swara-meta {
         display: flex;
         align-items: center;
         gap: 16px;
-        overflow: hidden;
     }
 
-    .swara-art-container {
+    .swara-art-wrapper {
+        position: relative;
         width: 56px;
         height: 56px;
-        border-radius: 12px;
+        border-radius: 8px;
         overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         flex-shrink: 0;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        position: relative;
     }
 
-    .swara-artwork {
+    .swara-art {
         width: 100%;
         height: 100%;
         object-fit: cover;
     }
 
-    .swara-text-content {
-        flex: 1;
-        min-width: 0;
+    .swara-info {
+        min-width: 0; /* truncate text */
         display: flex;
         flex-direction: column;
         justify-content: center;
     }
 
-    .swara-title {
-        font-weight: 600;
-        font-size: 15px;
+    .swara-track-title {
         color: #fff;
+        font-size: 15px;
+        font-weight: 600;
         margin: 0;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
-    .swara-artist {
-        font-size: 13px;
+    .swara-track-artist {
         color: rgba(255, 255, 255, 0.6);
-        margin: 3px 0 0 0;
+        font-size: 13px;
+        margin: 2px 0 0;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
-    /* --- Controls Section --- */
-    .swara-controls-section {
+    /* Wave Animation */
+    .swara-wave-anim {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        gap: 3px;
+        padding-bottom: 8px;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .swara-wave-anim span {
+        width: 3px;
+        background: var(--accent-color, #ff4757);
+        animation: wave 1s infinite ease-in-out;
+        border-radius: 2px;
+    }
+    .swara-wave-anim span:nth-child(1) {
+        height: 40%;
+        animation-delay: 0.1s;
+    }
+    .swara-wave-anim span:nth-child(2) {
+        height: 80%;
+        animation-delay: 0.2s;
+    }
+    .swara-wave-anim span:nth-child(3) {
+        height: 50%;
+        animation-delay: 0.3s;
+    }
+
+    @keyframes wave {
+        0%,
+        100% {
+            transform: scaleY(0.5);
+        }
+        50% {
+            transform: scaleY(1);
+        }
+    }
+
+    /* --- 2. Controls --- */
+    .swara-controls {
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
-        gap: 8px;
+        gap: 6px;
     }
 
-    .swara-btn-group {
+    .swara-buttons {
         display: flex;
         align-items: center;
-        gap: clamp(12px, 3vw, 24px);
+        gap: 20px;
     }
 
-    .swara-icon-btn {
+    .swara-btn {
         background: none;
         border: none;
-        color: #fff;
-        opacity: 0.6;
+        color: rgba(255, 255, 255, 0.7);
         cursor: pointer;
-        transition: all 0.2s;
-        padding: 6px;
+        padding: 5px;
+        transition: color 0.2s;
+        border-radius: 50%;
         display: flex;
         align-items: center;
-        border-radius: 50%;
+        justify-content: center;
     }
-
-    .swara-icon-btn:hover {
-        opacity: 1;
-        background: rgba(255, 255, 255, 0.05);
+    .swara-btn:hover {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.1);
     }
-
-    .swara-icon-btn svg {
-        width: 22px;
-        height: 22px;
+    .swara-btn svg {
+        width: 24px;
+        height: 24px;
     }
-
-    .swara-skip-btn svg {
+    .swara-skip svg {
         width: 20px;
         height: 20px;
     }
 
-    .swara-play-trigger {
-        background: white;
-        border: none;
-        width: 48px;
-        height: 48px;
+    .swara-play-btn {
+        width: 44px;
+        height: 44px;
         border-radius: 50%;
+        background: #fff;
+        color: #000;
+        border: none;
+        cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        cursor: pointer;
-        transition:
-            transform 0.2s,
-            box-shadow 0.2s;
-        color: black;
-        box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+        transition: transform 0.2s;
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
     }
-
-    .swara-play-trigger:hover {
+    .swara-play-btn:hover {
         transform: scale(1.05);
-        box-shadow: 0 6px 16px rgba(255, 255, 255, 0.3);
     }
-
-    .swara-play-svg {
+    .swara-play-btn svg {
         width: 26px;
         height: 26px;
     }
 
-    /* Progress bar */
-    .swara-scrub-area {
+    /* Progress */
+    .swara-progress-container {
         width: 100%;
         max-width: 500px;
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 10px;
     }
 
     .swara-time {
         font-size: 11px;
+        color: rgba(255, 255, 255, 0.5);
         font-variant-numeric: tabular-nums;
-        color: rgba(255, 255, 255, 0.4);
-        min-width: 30px;
+        min-width: 32px;
     }
 
-    .swara-progress-track {
+    .swara-progress-bar {
         flex: 1;
         height: 4px;
         background: rgba(255, 255, 255, 0.15);
-        border-radius: 10px;
+        border-radius: 2px;
         cursor: pointer;
         position: relative;
-        transition: height 0.2s;
     }
-
-    .swara-progress-track:hover {
-        height: 6px;
-    }
-
     .swara-progress-fill {
         height: 100%;
-        background: var(--accent-color, #a855f7);
-        border-radius: 10px;
+        background: var(--accent-color, #ff4757);
         width: 0%;
+        border-radius: 2px;
         position: relative;
     }
-
-    .swara-progress-handle {
+    .swara-progress-fill::after {
+        content: "";
         position: absolute;
-        right: -5px;
+        right: -4px;
         top: 50%;
         transform: translateY(-50%) scale(0);
-        width: 12px;
-        height: 12px;
-        background: white;
+        width: 10px;
+        height: 10px;
+        background: #fff;
         border-radius: 50%;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         transition: transform 0.1s;
     }
-
-    .swara-progress-track:hover .swara-progress-handle {
+    .swara-progress-bar:hover .swara-progress-fill::after {
         transform: translateY(-50%) scale(1);
     }
 
-    /* --- Volume Section --- */
-    .swara-volume-section {
+    /* --- 3. Volume --- */
+    .swara-volume {
         display: flex;
         justify-content: flex-end;
         align-items: center;
-    }
-
-    .swara-volume-wrap {
-        display: flex;
-        align-items: center;
         gap: 8px;
-        width: 130px;
     }
 
-    .swara-slider {
+    .swara-range {
         -webkit-appearance: none;
-        width: 100%;
+        width: 80px;
         height: 4px;
         background: rgba(255, 255, 255, 0.15);
-        border-radius: 10px;
+        border-radius: 2px;
         outline: none;
-        cursor: pointer;
     }
-
-    .swara-slider::-webkit-slider-thumb {
+    .swara-range::-webkit-slider-thumb {
         -webkit-appearance: none;
         width: 12px;
         height: 12px;
-        background: white;
+        background: #fff;
         border-radius: 50%;
         cursor: pointer;
     }
 
-    /* --- Mobile Responsive --- */
+    /* --- Mobile --- */
     @media (max-width: 768px) {
-        .swara-player {
-            bottom: 12px;
-            width: calc(100% - 24px);
-            padding: 2px;
-        }
-
         .swara-layout {
-            grid-template-columns: 1fr;
+            grid-template-columns: 1fr auto; /* Title | PlayBtn */
             gap: 12px;
+            padding: 4px 0;
         }
 
-        .swara-meta-section {
-            justify-content: center;
+        .swara-meta {
+            flex: 1;
+            align-items: center;
         }
 
-        .swara-art-container {
-            width: 48px;
-            height: 48px;
-        }
-
-        .swara-volume-section {
-            display: none;
-        }
-
-        .swara-player-inner {
-            padding: 10px 16px;
-        }
-
-        .swara-btn-group {
-            gap: 12px;
-            width: 100%;
-            justify-content: center;
-        }
-
-        .swara-title {
-            font-size: 14px;
-        }
-
-        .swara-artist {
-            font-size: 12px;
-        }
-
-        .swara-skip-btn {
-            transform: scale(0.9);
-        }
-
-        .swara-icon-btn svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        .swara-play-trigger {
+        .swara-art-wrapper {
             width: 42px;
             height: 42px;
         }
 
-        .swara-play-svg {
-            width: 22px;
-            height: 22px;
+        /* Hide complicated controls on mobile default view */
+        .swara-controls {
+            flex-direction: row;
+            width: auto;
         }
+
+        .swara-volume,
+        .swara-skip,
+        .swara-progress-container,
+        #swara-prev,
+        #swara-next {
+            display: none; /* Simplify for mobile bar */
+        }
+
+        /* Show only Play button on the right */
+        .swara-buttons {
+            gap: 0;
+        }
+        .swara-play-btn {
+            width: 40px;
+            height: 40px;
+        }
+
+        /* If we want full controls, we'd need an expand interaction. 
+           For now, let's keep it simple bar. */
+    }
+
+    /* Tweaking Mobile to show a bit more */
+    @media (max-width: 768px) {
+        .swara-controls {
+            /* Override to show Prev/Next on mobile too? */
+            display: flex;
+            flex-direction: row;
+        }
+        #swara-prev,
+        #swara-next {
+            display: flex; /* Show these */
+        }
+        .swara-buttons {
+            gap: 12px;
+        }
+        /* Keep progress hidden to save space, or make it a tiny line at top */
     }
 </style>
