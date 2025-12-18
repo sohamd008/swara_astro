@@ -1,85 +1,159 @@
 ---
-
+// Player.astro
 ---
 
-<div id="music-player" class="music-player glass" style="display: none;">
-    <div class="player-container">
-        <div class="track-info">
-            <div class="track-img">
-                <img src="/logo.jpg" alt="Logo" id="player-img" />
-            </div>
-            <div class="track-text">
-                <div class="track-title" id="player-title">Track Title</div>
-                <div class="track-artist" id="player-artist">Artist Name</div>
-            </div>
-        </div>
+<div id="music-player" class="music-player glass-heavy" style="display: none;">
+    <div class="player-inner">
+        <!-- Visual Liquid Glow -->
+        <div class="player-glow"></div>
 
-        <div class="player-controls">
-            <div class="main-controls">
-                <button class="ctrl-btn" id="prev-btn">
-                    <svg
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                    >
-                        <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"></path>
-                    </svg>
-                </button>
-                <button class="ctrl-btn play-pause-btn" id="player-play-btn">
-                    <svg
-                        width="32"
-                        height="32"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        id="play-icon"
-                    >
-                        <path d="M8 5v14l11-7z"></path>
-                    </svg>
-                    <svg
-                        width="32"
-                        height="32"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        id="pause-icon"
-                        style="display: none;"
-                    >
-                        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path>
-                    </svg>
-                </button>
-                <button class="ctrl-btn" id="next-btn">
-                    <svg
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                    >
-                        <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"></path>
-                    </svg>
-                </button>
-            </div>
-            <div class="progress-container">
-                <span id="current-time">0:00</span>
-                <div class="progress-bar" id="progress-bar-bg">
-                    <div class="progress-fill" id="progress-fill"></div>
+        <div class="player-layout">
+            <!-- Part 1: Track Info -->
+            <div class="track-section">
+                <div class="artwork-container">
+                    <img
+                        src="/logo.jpg"
+                        alt="Artwork"
+                        id="player-img"
+                        class="artwork"
+                    />
                 </div>
-                <span id="total-time">0:00</span>
+                <div class="meta-data">
+                    <div class="title-scroller">
+                        <h4 id="player-title" class="title">Select a Track</h4>
+                    </div>
+                    <p id="player-artist" class="artist">Swaramanjusha</p>
+                </div>
             </div>
-        </div>
 
-        <div class="volume-controls">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <path
-                    d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"
-                ></path>
-            </svg>
-            <input
-                type="range"
-                id="volume-slider"
-                min="0"
-                max="100"
-                value="80"
-            />
+            <!-- Part 2: Main Controls -->
+            <div class="controls-section">
+                <div class="playback-buttons">
+                    <button
+                        class="icon-btn secondary-btn"
+                        id="prev-btn"
+                        title="Previous"
+                    >
+                        <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            ><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"></path></svg
+                        >
+                    </button>
+                    <button
+                        class="icon-btn secondary-btn"
+                        id="rewind-btn"
+                        title="Rewind 15s"
+                    >
+                        <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            ><path d="M11 17l-5-5 5-5m-7 5h16"></path></svg
+                        >
+                    </button>
+
+                    <button
+                        class="play-trigger"
+                        id="player-play-btn"
+                        title="Play/Pause"
+                    >
+                        <div class="play-circle">
+                            <svg
+                                width="28"
+                                height="28"
+                                viewBox="0 0 24 24"
+                                fill="currentColor"
+                                id="play-icon"
+                            >
+                                <path d="M8 5v14l11-7z"></path>
+                            </svg>
+                            <svg
+                                width="28"
+                                height="28"
+                                viewBox="0 0 24 24"
+                                fill="currentColor"
+                                id="pause-icon"
+                                style="display: none;"
+                            >
+                                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"
+                                ></path>
+                            </svg>
+                        </div>
+                    </button>
+
+                    <button
+                        class="icon-btn secondary-btn"
+                        id="forward-btn"
+                        title="Forward 15s"
+                    >
+                        <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            ><path d="M13 17l5-5-5-5M4 12h16"></path></svg
+                        >
+                    </button>
+                    <button
+                        class="icon-btn secondary-btn"
+                        id="next-btn"
+                        title="Next"
+                    >
+                        <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            ><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"
+                            ></path></svg
+                        >
+                    </button>
+                </div>
+
+                <div class="scrub-container">
+                    <span class="time-stamp" id="current-time">0:00</span>
+                    <div class="scrub-bar" id="progress-bar-bg">
+                        <div class="scrub-fill" id="progress-fill">
+                            <div class="scrub-knob"></div>
+                        </div>
+                    </div>
+                    <span class="time-stamp" id="total-time">0:00</span>
+                </div>
+            </div>
+
+            <!-- Part 3: Secondary Controls -->
+            <div class="utility-section">
+                <div class="volume-module">
+                    <button class="icon-btn speaker-icon">
+                        <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                        >
+                            <path
+                                d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"
+                            ></path>
+                        </svg>
+                    </button>
+                    <input
+                        type="range"
+                        id="volume-slider"
+                        class="styled-slider"
+                        min="0"
+                        max="100"
+                        value="80"
+                    />
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -92,9 +166,12 @@
         currentTrack,
         volume,
         togglePlay,
+        nextTrack,
+        prevTrack,
+        showPlayer,
     } from "../lib/playerStore";
 
-    const player = document.getElementById("music-player");
+    const container = document.getElementById("music-player");
     const audio = document.getElementById("main-audio") as HTMLAudioElement;
     const playBtn = document.getElementById("player-play-btn");
     const playIcon = document.getElementById("play-icon");
@@ -105,45 +182,65 @@
     const progressBarBg = document.getElementById("progress-bar-bg");
     const currentTimeEl = document.getElementById("current-time");
     const totalTimeEl = document.getElementById("total-time");
-    const volumeSlider = document.getElementById(
+    const volSlider = document.getElementById(
         "volume-slider",
     ) as HTMLInputElement;
+    const nextBtn = document.getElementById("next-btn");
+    const prevBtn = document.getElementById("prev-btn");
+    const forwardBtn = document.getElementById("forward-btn");
+    const rewindBtn = document.getElementById("rewind-btn");
 
-    currentTrack.subscribe((track) => {
-        if (track && player && audio && titleEl && artistEl) {
-            player.style.display = "block";
-            titleEl.textContent = track.title;
-            artistEl.textContent = track.artist;
+    // Subscription: Reveal Player
+    showPlayer.subscribe((show) => {
+        if (container) container.style.display = show ? "block" : "none";
+    });
+
+    // Subscription: New Track
+    currentTrack.subscribe((trackData) => {
+        const track = trackData as any;
+        if (track && audio && titleEl && artistEl) {
             if (audio.src !== track.url) {
                 audio.src = track.url;
-                audio.play();
+                audio
+                    .play()
+                    .catch((e) => console.log("User interaction required"));
             }
+            titleEl.textContent = track.title;
+            artistEl.textContent = track.artist;
         }
     });
 
+    // Subscription: Play/Pause State
     isPlaying.subscribe((playing) => {
-        if (audio) {
-            if (playing) {
-                audio.play().catch(() => {});
-                if (playIcon) playIcon.style.display = "none";
-                if (pauseIcon) pauseIcon.style.display = "block";
-            } else {
-                audio.pause();
-                if (playIcon) playIcon.style.display = "block";
-                if (pauseIcon) pauseIcon.style.display = "none";
-            }
+        if (!audio) return;
+        if (playing) {
+            audio.play().catch(() => {});
+            if (playIcon) playIcon.style.display = "none";
+            if (pauseIcon) pauseIcon.style.display = "block";
+        } else {
+            audio.pause();
+            if (playIcon) playIcon.style.display = "block";
+            if (pauseIcon) pauseIcon.style.display = "none";
         }
     });
 
-    playBtn?.addEventListener("click", () => {
-        togglePlay();
+    // Basic Logic
+    playBtn?.addEventListener("click", () => togglePlay());
+    nextBtn?.addEventListener("click", () => nextTrack());
+    prevBtn?.addEventListener("click", () => prevTrack());
+
+    forwardBtn?.addEventListener("click", () => {
+        if (audio) audio.currentTime += 15;
+    });
+
+    rewindBtn?.addEventListener("click", () => {
+        if (audio) audio.currentTime -= 15;
     });
 
     audio?.addEventListener("timeupdate", () => {
         if (audio.duration) {
-            const progress = (audio.currentTime / audio.duration) * 100;
-            if (progressFill) progressFill.style.width = `${progress}%`;
-
+            const pct = (audio.currentTime / audio.duration) * 100;
+            if (progressFill) progressFill.style.width = `${pct}%`;
             if (currentTimeEl)
                 currentTimeEl.textContent = formatTime(audio.currentTime);
             if (totalTimeEl)
@@ -152,217 +249,314 @@
     });
 
     progressBarBg?.addEventListener("click", (e) => {
-        if (audio) {
+        if (audio && progressBarBg) {
             const rect = progressBarBg.getBoundingClientRect();
             const pos = (e.clientX - rect.left) / rect.width;
             audio.currentTime = pos * audio.duration;
         }
     });
 
-    volumeSlider?.addEventListener("input", () => {
-        if (audio) {
-            const val = parseInt(volumeSlider.value) / 100;
-            audio.volume = val;
-            volume.set(val);
-        }
+    volSlider?.addEventListener("input", () => {
+        const val = parseInt(volSlider.value) / 100;
+        audio.volume = val;
+        volume.set(val);
     });
 
-    function formatTime(seconds: number) {
-        const min = Math.floor(seconds / 60);
-        const sec = Math.floor(seconds % 60);
-        return `${min}:${sec.toString().padStart(2, "0")}`;
+    function formatTime(sec: number) {
+        const m = Math.floor(sec / 60);
+        const s = Math.floor(sec % 60);
+        return `${m}:${s.toString().padStart(2, "0")}`;
     }
+
+    // Auto next
+    audio?.addEventListener("ended", () => nextTrack());
 </script>
 
 <style>
     .music-player {
         position: fixed;
-        bottom: 20px;
+        bottom: 24px;
         left: 50%;
         transform: translateX(-50%);
-        width: 90%;
-        max-width: 1100px;
-        height: 90px;
-        z-index: 2000;
-        background: var(--header-bg);
-        backdrop-filter: blur(30px) saturate(200%);
-        -webkit-backdrop-filter: blur(30px) saturate(200%);
-        border: 1px solid var(--glass-border);
-        border-radius: 45px;
-        padding: 0 30px;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        width: calc(100% - 48px);
+        max-width: 1200px;
+        z-index: 9999;
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        padding: 4px;
     }
 
-    .player-container {
+    .glass-heavy {
+        background: rgba(20, 20, 25, 0.75);
+        backdrop-filter: blur(40px) saturate(180%);
+        -webkit-backdrop-filter: blur(40px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 28px;
+        box-shadow:
+            0 25px 50px -12px rgba(0, 0, 0, 0.8),
+            inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    }
+
+    .player-inner {
+        position: relative;
+        padding: 12px 24px;
+        overflow: hidden;
+        border-radius: 24px;
+    }
+
+    /* Animated background glow */
+    .player-glow {
+        position: absolute;
+        top: -50%;
+        left: -20%;
+        width: 140%;
+        height: 200%;
+        background: radial-gradient(
+            circle,
+            var(--accent-color) 0%,
+            transparent 60%
+        );
+        opacity: 0.1;
+        filter: blur(60px);
+        pointer-events: none;
+        animation: glowPulse 8s infinite alternate;
+    }
+
+    @keyframes glowPulse {
+        from {
+            transform: translate(-10%, -10%);
+            opacity: 0.05;
+        }
+        to {
+            transform: translate(10%, 10%);
+            opacity: 0.15;
+        }
+    }
+
+    .player-layout {
+        display: grid;
+        grid-template-columns: 300px 1fr 200px;
+        align-items: center;
+        gap: 32px;
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Track Section */
+    .track-section {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        height: 100%;
-        gap: 40px;
+        gap: 16px;
     }
 
-    .track-info {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        width: 250px;
-    }
-
-    .track-img {
-        width: 54px;
-        height: 54px;
+    .artwork-container {
+        width: 56px;
+        height: 56px;
         border-radius: 12px;
         overflow: hidden;
-        background: var(--blob-1);
+        background: #1a1a1a;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        flex-shrink: 0;
     }
 
-    .track-img img {
+    .artwork {
         width: 100%;
         height: 100%;
         object-fit: cover;
     }
 
-    .track-text {
-        overflow: hidden;
-    }
-
-    .track-title {
-        font-weight: 700;
-        font-size: 15px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .track-artist {
-        font-size: 13px;
-        color: var(--text-secondary);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .player-controls {
+    .meta-data {
         flex: 1;
+        min-width: 0;
+    }
+
+    .title {
+        font-size: 15px;
+        font-weight: 600;
+        margin: 0;
+        color: white;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .artist {
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.5);
+        margin: 2px 0 0 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Controls Section */
+    .controls-section {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 8px;
+        gap: 12px;
     }
 
-    .main-controls {
+    .playback-buttons {
         display: flex;
         align-items: center;
-        gap: 24px;
+        gap: 20px;
     }
 
-    .ctrl-btn {
+    .icon-btn {
         background: none;
         border: none;
-        color: var(--text-primary);
+        color: white;
+        opacity: 0.6;
         cursor: pointer;
-        opacity: 0.8;
-        transition:
-            opacity 0.2s,
-            transform 0.2s;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        padding: 8px;
     }
 
-    .ctrl-btn:hover {
+    .icon-btn:hover {
         opacity: 1;
         transform: scale(1.1);
     }
 
-    .play-pause-btn {
-        width: 48px;
-        height: 48px;
+    .primary-btn {
+        opacity: 1;
+    }
+
+    .play-trigger {
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+    .play-trigger:hover {
+        transform: scale(1.08);
+    }
+
+    .play-trigger:active {
+        transform: scale(0.95);
+    }
+
+    .play-circle {
+        width: 52px;
+        height: 52px;
         background: white;
-        color: black;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        opacity: 1;
+        color: #000;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
     }
 
-    .progress-container {
+    .scrub-container {
+        width: 100%;
+        max-width: 600px;
         display: flex;
         align-items: center;
         gap: 12px;
-        width: 100%;
-        max-width: 500px;
     }
 
-    .progress-container span {
+    .time-stamp {
         font-size: 11px;
-        color: var(--text-secondary);
-        width: 35px;
+        font-family: monospace;
+        color: rgba(255, 255, 255, 0.4);
+        min-width: 35px;
     }
 
-    .progress-bar {
+    .scrub-bar {
         flex: 1;
-        height: 4px;
+        height: 6px;
         background: rgba(255, 255, 255, 0.1);
-        border-radius: 2px;
+        border-radius: 3px;
         cursor: pointer;
         position: relative;
+        transition: height 0.2s;
     }
 
-    .progress-fill {
+    .scrub-bar:hover {
+        height: 8px;
+    }
+
+    .scrub-fill {
         height: 100%;
         background: var(--accent-color);
-        border-radius: 2px;
+        border-radius: 3px;
         width: 0%;
         position: relative;
     }
 
-    .progress-fill::after {
-        content: "";
+    .scrub-knob {
         position: absolute;
         right: -6px;
-        top: -4px;
+        top: 50%;
+        transform: translateY(-50%) scale(0);
+        width: 14px;
+        height: 14px;
+        background: white;
+        border-radius: 50%;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        transition: transform 0.2s;
+    }
+
+    .scrub-bar:hover .scrub-knob {
+        transform: translateY(-50%) scale(1);
+    }
+
+    /* Utility Section */
+    .utility-section {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .volume-module {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 140px;
+    }
+
+    .styled-slider {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 2px;
+        outline: none;
+    }
+
+    .styled-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
         width: 12px;
         height: 12px;
         background: white;
         border-radius: 50%;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-        opacity: 0;
-        transition: opacity 0.2s;
-    }
-
-    .progress-bar:hover .progress-fill::after {
-        opacity: 1;
-    }
-
-    .volume-controls {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        width: 150px;
-        color: var(--text-secondary);
-    }
-
-    input[type="range"] {
-        flex: 1;
-        height: 4px;
-        accent-color: var(--text-primary);
         cursor: pointer;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
     }
 
-    @media (max-width: 900px) {
-        .volume-controls {
+    /* Responsive */
+    @media (max-width: 1000px) {
+        .player-layout {
+            grid-template-columns: 1fr 1.5fr;
+        }
+        .utility-section {
             display: none;
         }
     }
 
-    @media (max-width: 768px) {
-        .track-info {
-            width: auto;
+    @media (max-width: 650px) {
+        .player-layout {
+            grid-template-columns: 1fr;
+            gap: 16px;
         }
-        .track-text {
-            display: none;
+        .track-section {
+            justify-content: center;
         }
-        .progress-container {
-            max-width: 200px;
+        .scrub-container {
+            max-width: none;
         }
     }
 </style>

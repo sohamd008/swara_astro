@@ -100,7 +100,7 @@ const songs = artist.data.songs;
 </Layout>
 
 <script>
-    import { playTrack } from "../../lib/playerStore";
+    import { playTrack, playCollection } from "../../lib/playerStore";
     import { userStart } from "../../lib/authStore";
 
     let currentUser: any = null;
@@ -108,20 +108,20 @@ const songs = artist.data.songs;
         currentUser = user;
     });
 
-    const playBtns = document.querySelectorAll(".play-btn");
-    playBtns.forEach((btn) => {
-        btn.addEventListener("click", () => {
-            const url = btn.getAttribute("data-url");
-            const title = btn.getAttribute("data-title");
-            const artist = btn.getAttribute("data-artist");
+    const artistName = (document.querySelector(".hero-title") as HTMLElement)
+        ?.innerText;
+    const songItems = Array.from(document.querySelectorAll(".play-btn")).map(
+        (btn) => ({
+            url: btn.getAttribute("data-url") || "",
+            title: btn.getAttribute("data-title") || "",
+            artist: artistName || "Unknown Artist",
+        }),
+    );
 
-            if (url && title && artist) {
-                playTrack({
-                    url,
-                    title,
-                    artist,
-                });
-            }
+    const playBtns = document.querySelectorAll(".play-btn");
+    playBtns.forEach((btn, index) => {
+        btn.addEventListener("click", () => {
+            playCollection(songItems, index);
         });
     });
 
