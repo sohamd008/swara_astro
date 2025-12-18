@@ -53,3 +53,9 @@ export function prevTrack() {
         isPlaying.set(true);
     }
 }
+
+export function closePlayer() {
+    isPlaying.set(false);
+    showPlayer.set(false);
+    currentTrack.set(null);
+}

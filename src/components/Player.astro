@@ -12,6 +12,25 @@
     <div class="swara-glow"></div>
 
     <div class="swara-player-inner">
+        <!-- Close Button -->
+        <button
+            id="swara-close"
+            class="swara-close-btn"
+            aria-label="Close Player"
+        >
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+
         <!-- Layout Grid -->
         <div class="swara-layout">
             <!-- 1. Meta (Art + Info) -->
@@ -172,6 +191,7 @@
         togglePlay,
         nextTrack,
         prevTrack,
+        closePlayer,
     } from "../lib/playerStore";
 
     // SINGLETON PATTERN: Use a global flag to prevent double-initialization
@@ -207,6 +227,13 @@
         const volInput = document.getElementById(
             "swara-vol",
         ) as HTMLInputElement;
+        const closeBtn = document.getElementById("swara-close");
+
+        // Close Button
+        closeBtn?.addEventListener("click", (e) => {
+            e.stopPropagation();
+            closePlayer();
+        });
 
         // --- Store Subscriptions ---
 
@@ -375,6 +402,31 @@
         max-width: 1200px;
         margin: 0 auto;
         padding: 12px 24px;
+        position: relative;
+    }
+
+    .swara-close-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.4);
+        cursor: pointer;
+        padding: 4px;
+        z-index: 10;
+        border-radius: 50%;
+        transition:
+            color 0.2s,
+            background 0.2s;
+    }
+    .swara-close-btn:hover {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.1);
+    }
+    .swara-close-btn svg {
+        width: 18px;
+        height: 18px;
     }
 
     .swara-layout {
