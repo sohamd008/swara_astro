@@ -60,7 +60,11 @@ import { userStart } from "../lib/authStore";
       <div id="auth-container-desktop" style="display:contents">
         <!-- Placeholder for JS injection -->
         <li id="auth-link-desktop" style="list-style: none;">
-          <a href="/login" class="nav-link nav-btn">Login / Signup</a>
+          <a
+            href="/login"
+            class="nav-link nav-btn"
+            aria-label="Login or Sign up">Login / Signup</a
+          >
         </li>
       </div>
     </nav>
@@ -141,7 +145,7 @@ import { userStart } from "../lib/authStore";
                 Profile
             </a>`;
       } else {
-        authLinkDesktop.innerHTML = `<a href="/login" class="nav-link nav-btn">Login / Signup</a>`;
+        authLinkDesktop.innerHTML = `<a href="/login" class="nav-link nav-btn" aria-label="Login or Sign up" style="white-space: nowrap;">Login / Signup</a>`;
       }
     }
 
@@ -155,7 +159,7 @@ import { userStart } from "../lib/authStore";
                 Profile
             </a>`;
       } else {
-        authLinkMobile.innerHTML = `<a href="/login" class="nav-btn mobile-btn" style="display: block; text-align: center;">Login / Signup</a>`;
+        authLinkMobile.innerHTML = `<a href="/login" class="nav-btn mobile-btn" style="display: block; text-align: center; white-space: nowrap;" aria-label="Login or Sign up">Login / Signup</a>`;
       }
     }
   });
@@ -266,6 +270,7 @@ import { userStart } from "../lib/authStore";
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 4px 15px rgba(255, 45, 85, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.2);
+    white-space: nowrap;
     position: relative;
     overflow: hidden;
   }

@@ -7,7 +7,7 @@ const { artist } = Astro.props;
         <div class="artist-avatar">
             <img
                 src={artist.data.image || "/logo.jpg"}
-                alt={artist.data.name}
+                alt={`Photo of Pandit ${artist.data.name}`}
             />
         </div>
         <div class="artist-info">

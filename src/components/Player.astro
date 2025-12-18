@@ -50,6 +50,7 @@
                         class="swara-icon-btn"
                         id="swara-prev"
                         title="Previous"
+                        aria-label="Previous Track"
                     >
                         <svg viewBox="0 0 24 24" fill="currentColor"
                             ><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"></path></svg
@@ -59,6 +60,7 @@
                         class="swara-icon-btn swara-skip-btn"
                         id="swara-rewind"
                         title="Rewind 15s"
+                        aria-label="Rewind 15 seconds"
                     >
                         <svg
                             viewBox="0 0 24 24"
@@ -73,6 +75,7 @@
                         class="swara-play-trigger"
                         id="swara-play-toggle"
                         title="Play/Pause"
+                        aria-label="Toggle Playback"
                     >
                         <div class="swara-play-circle">
                             <svg
@@ -100,6 +103,7 @@
                         class="swara-icon-btn swara-skip-btn"
                         id="swara-forward"
                         title="Forward 15s"
+                        aria-label="Forward 15 seconds"
                     >
                         <svg
                             viewBox="0 0 24 24"
@@ -109,7 +113,12 @@
                             ><path d="M13 17l5-5-5-5M4 12h16"></path></svg
                         >
                     </button>
-                    <button class="swara-icon-btn" id="swara-next" title="Next">
+                    <button
+                        class="swara-icon-btn"
+                        id="swara-next"
+                        title="Next"
+                        aria-label="Next Track"
+                    >
                         <svg viewBox="0 0 24 24" fill="currentColor"
                             ><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"
                             ></path></svg
@@ -134,7 +143,10 @@
             <!-- Volume -->
             <div class="swara-volume-section">
                 <div class="swara-volume-wrap">
-                    <button class="swara-icon-btn small">
+                    <button
+                        class="swara-icon-btn small"
+                        aria-label="Volume Control"
+                    >
                         <svg viewBox="0 0 24 24" fill="currentColor">
                             <path
                                 d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"
