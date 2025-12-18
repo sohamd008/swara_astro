@@ -45,6 +45,11 @@ import Layout from "../layouts/Layout.astro";
                     id="submit-btn"
                     class="login-btn shine-btn">Login</button
                 >
+                <button
+                    type="button"
+                    id="forgot-pass-btn"
+                    class="text-btn forgot-btn">Forgot Password?</button
+                >
             </form>
 
             <div class="divider">
@@ -77,6 +82,7 @@ import Layout from "../layouts/Layout.astro";
         GoogleAuthProvider,
         signInWithPopup,
         updateProfile,
+        sendPasswordResetEmail,
     } from "firebase/auth";
 
     const authForm = document.getElementById("auth-form") as HTMLFormElement;
@@ -90,8 +96,27 @@ import Layout from "../layouts/Layout.astro";
     const formTitle = document.getElementById("form-title");
     const formDesc = document.getElementById("form-desc");
     const googleBtn = document.getElementById("google-btn");
+    const forgotBtn = document.getElementById("forgot-pass-btn");
 
     let isLogin = true;
+
+    forgotBtn?.addEventListener("click", async () => {
+        const email = emailInput.value;
+        if (!email) {
+            alert("Please enter your email address first.");
+            return;
+        }
+        try {
+            await sendPasswordResetEmail(auth, email);
+            alert(
+                "Password reset email sent to " +
+                    email +
+                    ". Please check your inbox (and spam folder).",
+            );
+        } catch (error: any) {
+            alert("Error: " + error.message);
+        }
+    });
 
     toggleBtn?.addEventListener("click", () => {
         isLogin = !isLogin;
