@@ -52,28 +52,15 @@ import { getCollection } from "astro:content";
         <h2 class="section-title">Featured <span>Maestros</span></h2>
         <div class="scroll-snap-carousel artist-carousel">
             {
-            {
-                (() => {
-                    const allArtists = sortArtists(artists); // sortArtists is not defined here, wait.
-                    // Better logic inline:
-                    // 1. Find Kaivalya
-                    // 2. Filter others
-                    // 3. Combine
-                })
-            }
-            {
                 (await getCollection("artists"))
                     .sort((a, b) => {
                         // Priority for Kaivalya Kumar Gurav
-                        if (a.slug === 'kaivalyakumar-gurav') return -1;
-                        if (b.slug === 'kaivalyakumar-gurav') return 1;
-                        // Randomize or keep distinct order for others? 
-                        // Let's just keep default order but move him to top.
+                        if (a.slug === "kaivalyakumar-gurav") return -1;
+                        if (b.slug === "kaivalyakumar-gurav") return 1;
                         return 0;
                     })
                     .slice(0, 5)
                     .map((artist) => <ArtistCard artist={artist} />)
-            }
             }
         </div>
         <div class="view-all-container">
