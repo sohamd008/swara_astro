@@ -161,8 +161,19 @@ body {
 }
 
 .glass-btn:hover {
-    var(--accent-color) 60%,
-    var(--text-primary) 80%);
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(255, 45, 85, 0.4);
+}
+
+/* --- ANIMATIONS & UTILITIES --- */
+
+/* 1. Animated Gradient Text */
+.gradient-text {
+    background: linear-gradient(to right,
+            var(--text-primary) 20%,
+            var(--accent-color) 40%,
+            var(--accent-color) 60%,
+            var(--text-primary) 80%);
     background-size: 200% auto;
     color: #000;
     background-clip: text;
