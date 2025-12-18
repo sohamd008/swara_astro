@@ -376,11 +376,14 @@
 
     .swara-player {
         position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: calc(100% - 40px);
+        max-width: 1000px;
         z-index: 9999;
-        padding-bottom: env(safe-area-inset-bottom);
+        border-radius: 20px;
+        overflow: hidden; /* Ensure contents clip to border radius */
     }
 
     .swara-glow {

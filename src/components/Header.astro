@@ -75,7 +75,44 @@ import { userStart } from "../lib/authStore";
     <div class="mobile-nav-content">
       <a href="/" class="mobile-link">Home</a>
       <a href="/artists" class="mobile-link">Artists</a>
+      <a href="/artists" class="mobile-link">Artists</a>
       <a href="#" class="mobile-link">About Us</a>
+
+      <!-- Mobile Theme Toggle -->
+      <button
+        class="theme-toggle mobile-theme-toggle"
+        aria-label="Toggle Theme"
+      >
+        <span class="theme-text">Theme</span>
+        <svg
+          class="sun-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg
+          class="moon-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          style="display: none;"
+        >
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+
       <div id="auth-container-mobile" style="margin-top: 20px;">
         <div id="auth-link-mobile">
           <a href="/login" class="nav-btn mobile-btn">Login / Signup</a>
@@ -90,35 +127,47 @@ import { userStart } from "../lib/authStore";
 
   // Run on initial load AND after view transitions
   function initTheme() {
-    const themeToggle = document.getElementById("theme-toggle");
-    const sunIcon = document.querySelector(".sun-icon") as HTMLElement;
-    const moonIcon = document.querySelector(".moon-icon") as HTMLElement;
+    // Select ALL theme toggles (desktop & mobile)
+    const themeToggles = document.querySelectorAll(".theme-toggle");
 
-    // Set icon visibility based on current theme
+    // Function to update UI state for ALL buttons
+    const updateIcons = (theme: string) => {
+      themeToggles.forEach((btn) => {
+        const sun = btn.querySelector(".sun-icon");
+        const moon = btn.querySelector(".moon-icon");
+        if (sun && moon) {
+          if (theme === "light") {
+            (sun as HTMLElement).style.display = "none";
+            (moon as HTMLElement).style.display = "block";
+          } else {
+            (sun as HTMLElement).style.display = "block";
+            (moon as HTMLElement).style.display = "none";
+          }
+        }
+      });
+    };
+
+    // Initialize state
     const currentTheme =
       document.documentElement.getAttribute("data-theme") || "dark";
-    if (currentTheme === "light") {
-      if (sunIcon) sunIcon.style.display = "none";
-      if (moonIcon) moonIcon.style.display = "block";
-    } else {
-      if (sunIcon) sunIcon.style.display = "block";
-      if (moonIcon) moonIcon.style.display = "none";
-    }
+    updateIcons(currentTheme);
 
-    // Toggle handler
-    themeToggle?.addEventListener("click", () => {
-      const current = document.documentElement.getAttribute("data-theme");
-      const newTheme = current === "light" ? "dark" : "light";
-      document.documentElement.setAttribute("data-theme", newTheme);
-      localStorage.setItem("theme", newTheme);
+    // Bind Click Listeners (cleanup handled by replacement logic or standard event bubbling?)
+    // Best to just adding new listeners.
+    themeToggles.forEach((btn) => {
+      // Clone to clear old listeners if re-running without page reload (ViewTransitions)
+      // Or just use a check. Since initTheme runs on 'astro:page-load', elements are likely fresh.
 
-      if (newTheme === "light") {
-        if (sunIcon) sunIcon.style.display = "none";
-        if (moonIcon) moonIcon.style.display = "block";
-      } else {
-        if (sunIcon) sunIcon.style.display = "block";
-        if (moonIcon) moonIcon.style.display = "none";
-      }
+      (btn as HTMLElement).onclick = (e: MouseEvent) => {
+        // Use onclick prop to avoid duplicate listeners
+        const current = document.documentElement.getAttribute("data-theme");
+        const newTheme = current === "light" ? "dark" : "light";
+
+        document.documentElement.setAttribute("data-theme", newTheme);
+        localStorage.setItem("theme", newTheme);
+
+        updateIcons(newTheme);
+      };
     });
   }
 
@@ -437,5 +486,25 @@ import { userStart } from "../lib/authStore";
     .nav-container {
       padding: 0 20px;
     }
+
+    .mobile-theme-toggle {
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 10px 20px;
+      border-radius: 99px;
+      gap: 10px;
+      margin-top: 10px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .mobile-theme-toggle .theme-text {
+      font-size: 18px;
+      font-weight: 500;
+      display: block; /* Show text on mobile */
+    }
+  }
+
+  /* Hide theme text on desktop */
+  .theme-text {
+    display: none;
   }
 </style>
