@@ -40,6 +40,17 @@ import Layout from "../layouts/Layout.astro";
                     />
                 </div>
 
+                <div
+                    class="recaptcha-wrapper"
+                    style="margin: 20px 0; display: flex; justify-content: center;"
+                >
+                    <div
+                        class="g-recaptcha"
+                        data-sitekey="6Ld3jy0sAAAAAMHVQPgbeQcnakAbLAlR0mHg47XP"
+                    >
+                    </div>
+                </div>
+
                 <button
                     type="submit"
                     id="submit-btn"
@@ -146,11 +157,38 @@ import Layout from "../layouts/Layout.astro";
 
     authForm?.addEventListener("submit", async (e) => {
         e.preventDefault();
+
+        // 1. Get reCAPTCHA token
+        // @ts-ignore - g-recaptcha is injected by the script
+        const recaptchaToken = (window as any).grecaptcha.getResponse();
+
+        if (!recaptchaToken) {
+            alert("Please complete the reCAPTCHA challenge.");
+            return;
+        }
+
         const email = emailInput.value;
         const pass = passInput.value;
         const name = nameInput.value;
 
         try {
+            // 2. Verify reCAPTCHA with backend
+            const verifyRes = await fetch("/verify", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ token: recaptchaToken }),
+            });
+
+            const verifyData = await verifyRes.json();
+
+            if (!verifyData.success) {
+                alert("reCAPTCHA verification failed. Please try again.");
+                // @ts-ignore
+                (window as any).grecaptcha.reset();
+                return;
+            }
+
+            // 3. Proceed with Firebase Auth
             if (isLogin) {
                 await signInWithEmailAndPassword(auth, email, pass);
             } else {
@@ -168,6 +206,8 @@ import Layout from "../layouts/Layout.astro";
             window.location.href = "/profile";
         } catch (error: any) {
             alert(error.message);
+            // @ts-ignore
+            if ((window as any).grecaptcha) (window as any).grecaptcha.reset();
         }
     });
 
