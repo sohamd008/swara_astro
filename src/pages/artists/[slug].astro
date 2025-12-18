@@ -12,25 +12,7 @@ export async function getStaticPaths() {
 
 const { artist } = Astro.props;
 const { Content } = await artist.render();
-
-// Mock songs data - in a real app this would come from the markdown or a database
-const songs = [
-    {
-        title: "Raga Bhairav - Drut Khayal",
-        duration: "12:45",
-        url: "https://cdn.upsound.com/demo/bhairav.mp3",
-    },
-    {
-        title: "Thumri - Ka Karu Sajani",
-        duration: "08:20",
-        url: "https://cdn.upsound.com/demo/thumri.mp3",
-    },
-    {
-        title: "Raga Yaman - Vilambit",
-        duration: "25:30",
-        url: "https://cdn.upsound.com/demo/yaman.mp3",
-    },
-];
+const songs = artist.data.songs;
 ---
 
 <Layout title={artist.data.name}>
