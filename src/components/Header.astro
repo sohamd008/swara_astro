@@ -27,6 +27,36 @@ import { userStart } from "../lib/authStore";
       <a href="/" class="nav-link">Home</a>
       <a href="/artists" class="nav-link">Artists</a>
       <a href="#" class="nav-link">About Us</a>
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle Theme">
+        <svg
+          class="sun-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg
+          class="moon-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          style="display: none;"
+        >
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+
       <div id="auth-container-desktop" style="display:contents">
         <!-- Placeholder for JS injection -->
         <li id="auth-link-desktop" style="list-style: none;">
@@ -53,6 +83,43 @@ import { userStart } from "../lib/authStore";
 
 <script>
   import { userStart } from "../lib/authStore";
+
+  // Theme Logic
+  const themeToggle = document.getElementById("theme-toggle");
+  const sunIcon = document.querySelector(".sun-icon") as HTMLElement;
+  const moonIcon = document.querySelector(".moon-icon") as HTMLElement;
+
+  // Check for saved theme preference, otherwise use system preference
+  const getPreferredTheme = () => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) {
+      return savedTheme;
+    }
+    return window.matchMedia("(prefers-color-scheme: light)").matches
+      ? "light"
+      : "dark";
+  };
+
+  const setTheme = (theme: string) => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+
+    if (theme === "light") {
+      if (sunIcon) sunIcon.style.display = "none";
+      if (moonIcon) moonIcon.style.display = "block";
+    } else {
+      if (sunIcon) sunIcon.style.display = "block";
+      if (moonIcon) moonIcon.style.display = "none";
+    }
+  };
+
+  // Initialize
+  setTheme(getPreferredTheme());
+
+  themeToggle?.addEventListener("click", () => {
+    const currentTheme = document.documentElement.getAttribute("data-theme");
+    setTheme(currentTheme === "light" ? "dark" : "light");
+  });
 
   // Auth Logic
   const authLinkDesktop = document.getElementById("auth-link-desktop");
@@ -203,6 +270,28 @@ import { userStart } from "../lib/authStore";
   .nav-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(255, 45, 85, 0.5);
+  }
+
+  .theme-toggle {
+    background: none;
+    border: none;
+    color: var(--nav-link-color);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .theme-toggle svg {
+    width: 20px;
+    height: 20px;
   }
 
   .profile-btn {
