@@ -1,1 +1,0 @@
-import{o as i,d as s,a as o}from"./firebase.HaRU0pKT.js";import{a as e}from"./index.D8u1G3xY.js";const t=e(null);typeof window<"u"&&i(o,a=>{a?t.set({uid:a.uid,email:a.email,displayName:a.displayName,photoURL:a.photoURL}):t.set(!1)});const m=async()=>{await s(o)};export{m as s,t as u};
