@@ -11,16 +11,6 @@ const firebaseConfig = {
     measurementId: import.meta.env.PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
-console.log("Firebase Config Debug:", {
-    apiKey: import.meta.env.PUBLIC_FIREBASE_API_KEY ? "Set" : "Missing",
-    projectId: import.meta.env.PUBLIC_FIREBASE_PROJECT_ID,
-    envMode: import.meta.env.MODE
-});
-
-if (!import.meta.env.PUBLIC_FIREBASE_API_KEY) {
-    console.error("CRITICAL: PUBLIC_FIREBASE_API_KEY is missing. Check Cloudflare Dashboard > Settings > Environment Variables.");
-}
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);

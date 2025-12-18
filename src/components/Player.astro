@@ -87,6 +87,16 @@
                         id="swara-img"
                         class="swara-artwork"
                     />
+                    <!-- Waveform Overlay -->
+                    <div
+                        id="swara-waveform"
+                        class="waveform"
+                        style="position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.3s;"
+                    >
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                    </div>
                 </div>
                 <div class="swara-text-content">
                     <div class="swara-title-mask">
@@ -438,18 +448,25 @@
 
                                 isPlaying.subscribe((playing) => {
                                     if (!audio) return;
+                                    const wave =
+                                        document.getElementById(
+                                            "swara-waveform",
+                                        );
+
                                     if (playing) {
                                         audio.play().catch(() => {});
                                         if (playIcon)
                                             playIcon.style.display = "none";
                                         if (pauseIcon)
                                             pauseIcon.style.display = "block";
+                                        if (wave) wave.style.opacity = "1";
                                     } else {
                                         audio.pause();
                                         if (playIcon)
                                             playIcon.style.display = "block";
                                         if (pauseIcon)
                                             pauseIcon.style.display = "none";
+                                        if (wave) wave.style.opacity = "0";
                                     }
                                 });
 
