@@ -1,5 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import ArtistCard from "../components/ArtistCard.astro";
+import { getCollection } from "astro:content";
 ---
 
 <Layout title="Home">
@@ -43,6 +45,20 @@ import Layout from "../layouts/Layout.astro";
                     Enterprise-grade encryption for your intellectual property.
                 </p>
             </div>
+        </div>
+    </div>
+
+    <div class="container featured-section">
+        <h2 class="section-title">Featured <span>Maestros</span></h2>
+        <div class="scroll-snap-carousel artist-carousel">
+            {
+                (await getCollection("artists"))
+                    .slice(0, 5)
+                    .map((artist) => <ArtistCard artist={artist} />)
+            }
+        </div>
+        <div class="view-all-container">
+            <a href="/artists" class="btn btn-glass">View All Artists →</a>
         </div>
     </div>
 
@@ -197,6 +213,34 @@ import Layout from "../layouts/Layout.astro";
         color: var(--text-secondary);
         max-width: 800px;
         margin: 0 auto 20px;
+    }
+
+    .featured-section {
+        margin-bottom: 80px;
+    }
+
+    .section-title {
+        font-size: 40px;
+        text-align: center;
+        margin-bottom: 40px;
+        color: var(--text-primary);
+    }
+
+    .section-title span {
+        font-family: "Dancing Script", cursive;
+        color: var(--accent-color);
+    }
+
+    .artist-carousel {
+        padding: 20px 40px;
+        gap: 24px;
+        justify-content: flex-start; /* Ensure scroll works from start */
+    }
+
+    .view-all-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
     }
 
     @media (max-width: 768px) {

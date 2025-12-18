@@ -3,7 +3,7 @@ const { artist } = Astro.props;
 ---
 
 <a href={`/artists/${artist.slug}`} class="artist-card-link">
-    <div class="artist-card">
+    <div class="artist-card glow-card">
         <div class="artist-avatar">
             <img
                 src={artist.data.image || "/logo.jpg"}

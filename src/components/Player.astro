@@ -636,12 +636,16 @@
             width: auto;
         }
 
+        .swara-skip {
+            display: none;
+        }
+
+        /* Show needed controls */
         .swara-volume,
-        .swara-skip,
-        .swara-progress-container,
         #swara-prev,
-        #swara-next {
-            display: none; /* Simplify for mobile bar */
+        #swara-next,
+        .swara-progress-container {
+            display: flex;
         }
 
         /* Show only Play button on the right */
@@ -657,20 +661,19 @@
            For now, let's keep it simple bar. */
     }
 
-    /* Tweaking Mobile to show a bit more */
-    @media (max-width: 768px) {
-        .swara-controls {
-            /* Override to show Prev/Next on mobile too? */
-            display: flex;
-            flex-direction: row;
-        }
-        #swara-prev,
-        #swara-next {
-            display: flex; /* Show these */
-        }
-        .swara-buttons {
-            gap: 12px;
-        }
-        /* Keep progress hidden to save space, or make it a tiny line at top */
+    .swara-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+        gap: 12px;
+        padding: 8px 4px;
+    }
+
+    .swara-buttons {
+        justify-content: center;
+    }
+
+    .swara-volume {
+        width: 100%;
+        justify-content: center;
     }
 </style>

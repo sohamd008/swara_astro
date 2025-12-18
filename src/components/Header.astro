@@ -165,29 +165,64 @@ import { userStart } from "../lib/authStore";
   });
 
   // Mobile Menu Logic
-  const menuToggle = document.getElementById("menu-toggle");
-  const mobileNav = document.getElementById("mobile-nav");
-  const body = document.body;
+  function initMenu() {
+    const menuToggle = document.getElementById("menu-toggle");
+    const mobileNav = document.getElementById("mobile-nav");
+    const body = document.body;
 
-  menuToggle?.addEventListener("click", () => {
-    menuToggle.classList.toggle("active");
-    mobileNav?.classList.toggle("active");
+    // Remove old listener to prevent duplicates if any (though unlikely with simple function replacement)
+    // simpler to just ensure we don't attach twice or use {once: true} but logic here needs persistence.
+    // cloneNode approach is nuclear. Let's just use a named function for the click handler?
+    // Actually, in Astro ViewTransitions, scripts re-run if they remain in DOM?
+    // No, <script> tags in .astro components run once per load unless "is:inline" or inside the body.
+    // But Header is persistent? No, checking Layout.astro...
+    // Header is inside Layout. Layout wraps everything.
+    // If <ViewTransitions /> is used, the Header might NOT be replaced if it's identical?
+    // Usually Astro replaces the whole body content.
+    // Let's assume standard behavior: we need to re-run logic on 'astro:page-load'
 
-    if (mobileNav?.classList.contains("active")) {
-      body.style.overflow = "hidden";
-    } else {
-      body.style.overflow = "";
+    // Clean up potentially old cloning if we want to be super safe, but standard addEventListener is fine
+    // if we are running in a fresh context or if elements are replaced.
+    // Since Header is part of the layout, it is likely replaced.
+
+    if (menuToggle && mobileNav) {
+      // Clone to strip old listeners (safest way in SPA-like navigation if elements persist)
+      // modifying DOM elements to remove event listeners is hard without reference.
+      // But if elements are new, it doesn't matter.
+
+      const toggleMenu = () => {
+        menuToggle.classList.toggle("active");
+        mobileNav.classList.toggle("active");
+        if (mobileNav.classList.contains("active")) {
+          body.style.overflow = "hidden";
+        } else {
+          body.style.overflow = "";
+        }
+      };
+
+      // If we heavily suspect elements are PERSISTED (not replaced), we should remove listener first.
+      // But we don't have reference to previous function instance.
+      // Let's assume elements are replaced or we just add listener.
+      // Best pattern for ViewTransitions:
+
+      menuToggle.onclick = toggleMenu; // Uses property to overwrite any existing handler. Safest for single-action buttons.
+
+      // Close menu on link click
+      document.querySelectorAll(".mobile-link").forEach((link) => {
+        (link as HTMLElement).onclick = () => {
+          menuToggle.classList.remove("active");
+          mobileNav.classList.remove("active");
+          body.style.overflow = "";
+        };
+      });
     }
-  });
+  }
 
-  // Close menu on link click
-  document.querySelectorAll(".mobile-link").forEach((link) => {
-    link.addEventListener("click", () => {
-      menuToggle?.classList.remove("active");
-      mobileNav?.classList.remove("active");
-      body.style.overflow = "";
-    });
-  });
+  // Initial load
+  initMenu();
+
+  // View Transitions load
+  document.addEventListener("astro:page-load", initMenu);
 </script>
 
 <style>
