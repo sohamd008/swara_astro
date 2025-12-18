@@ -1,0 +1,128 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@400;500;600;800&display=swap');
+
+:root {
+    --bg-color: #050510;
+    --blob-1: #2A2A5A;
+    --blob-2: #5856D6;
+    --blob-3: #1C1C9A;
+    --glass-fill: rgba(20, 20, 30, 0.4);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --glass-highlight: rgba(255, 255, 255, 0.3);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    --text-primary: #F5F5F7;
+    --text-secondary: #86868b;
+    --accent-color: #FF2D55;
+    --btn-glass-bg: rgba(60, 60, 70, 0.4);
+    --btn-glass-border: rgba(255, 255, 255, 0.15);
+    --btn-glass-text: #FFFFFF;
+    --btn-glass-hover: rgba(80, 80, 95, 0.6);
+    --btn-solid-bg: #FFFFFF;
+    --btn-solid-text: #000000;
+    --header-bg: rgba(20, 20, 30, 0.6);
+    --nav-link-color: #F5F5F7;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro", "Inter", sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    min-height: 100vh;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    background-color: var(--bg-color);
+    position: relative;
+    color: var(--text-primary);
+}
+
+/* --- LIQUID BACKGROUND --- */
+.blobs-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    filter: blur(80px);
+    overflow: hidden;
+}
+
+.blob {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.8;
+    animation: drift 20s infinite alternate;
+    will-change: transform;
+}
+
+.blob-1 {
+    top: -10%;
+    left: -10%;
+    width: 50vw;
+    height: 50vw;
+    background: var(--blob-1);
+    animation-duration: 25s;
+}
+
+.blob-2 {
+    bottom: -10%;
+    right: -10%;
+    width: 60vw;
+    height: 60vw;
+    background: var(--blob-2);
+    animation-duration: 30s;
+    animation-direction: alternate-reverse;
+}
+
+.blob-3 {
+    top: 30%;
+    left: 30%;
+    width: 40vw;
+    height: 40vw;
+    background: var(--blob-3);
+    animation-duration: 22s;
+    animation-delay: -5s;
+}
+
+@keyframes drift {
+    0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+    33% { transform: translate(30px, -50px) scale(1.1) rotate(10deg); }
+    66% { transform: translate(-20px, 20px) scale(0.9) rotate(-5deg); }
+    100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+    width: 100%;
+}
+
+.glass-btn {
+    padding: 10px 24px;
+    background: var(--accent-color);
+    color: white !important;
+    border-radius: 20px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.glass-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(255, 45, 85, 0.4);
+}
+

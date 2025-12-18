@@ -1,0 +1,196 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Home">
+    <div class="hero-content">
+        <h1 class="hero-title">
+            Experience the<br /><span>Swaramanjusha</span>
+        </h1>
+        <p class="hero-desc">
+            Your personal treasury of musical notes, accessible anywhere.<br
+            />Secure, beautiful, and designed for artists.
+        </p>
+        <div class="btn-group">
+            <a href="/artists" class="btn btn-solid">Get Started</a>
+            <a href="#about-us" class="btn btn-glass">Learn More</a>
+        </div>
+
+        <div class="hero-cards">
+            <div class="feature-card">
+                <span class="feature-icon">🎵</span>
+                <h2 class="feature-title">Note Treasury</h2>
+                <p class="feature-text">
+                    Store unlimited compositions in a secure cloud vault.
+                </p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🌊</span>
+                <h2 class="feature-title">Fluid Design</h2>
+                <p class="feature-text">
+                    An aesthetic interface that flows with your creativity.
+                </p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🔒</span>
+                <h2 class="feature-title">Secure Access</h2>
+                <p class="feature-text">
+                    Enterprise-grade encryption for your intellectual property.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <section id="about-us" class="about-section container">
+        <div class="glass-container about-container">
+            <h2>About Swaramanjusha</h2>
+            <p>
+                Swaramanjusha is a dedicated archive for Indian Classical Music,
+                created to preserve and share the timeless compositions of the
+                legendary maestros.
+            </p>
+            <p>
+                Our mission is to provide students, connoisseurs, and music
+                lovers with easy access to rare and precious recordings,
+                ensuring that our rich musical heritage continues to inspire
+                generations to come.
+            </p>
+        </div>
+    </section>
+</Layout>
+
+<style>
+    .hero-content {
+        text-align: center;
+        max-width: 900px;
+        z-index: 2;
+        padding: 0 20px;
+        margin-bottom: 100px;
+    }
+
+    .hero-title {
+        font-size: 64px;
+        font-weight: 800;
+        color: var(--text-primary);
+        letter-spacing: -1px;
+        margin-bottom: 24px;
+        line-height: 1.1;
+    }
+
+    .hero-title span {
+        color: var(--accent-color);
+        font-family: "Dancing Script", cursive;
+    }
+
+    .hero-desc {
+        font-size: 20px;
+        line-height: 1.6;
+        color: var(--text-secondary);
+        margin-bottom: 40px;
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        margin-bottom: 40px;
+    }
+
+    .btn {
+        height: 54px;
+        border-radius: 27px;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 30px;
+        text-decoration: none;
+        transition: transform 0.2s;
+    }
+
+    .btn-glass {
+        background-color: var(--btn-glass-bg);
+        color: var(--btn-glass-text);
+        border: 1px solid var(--btn-glass-border);
+    }
+
+    .btn-solid {
+        background-color: var(--btn-solid-bg);
+        color: var(--btn-solid-text);
+    }
+
+    .btn:hover {
+        transform: scale(1.02);
+    }
+
+    .hero-cards {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .feature-card {
+        background: var(--glass-fill);
+        border: 1px solid var(--glass-border);
+        padding: 30px;
+        border-radius: 24px;
+        width: 250px;
+        text-align: left;
+        backdrop-filter: blur(10px);
+        transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .feature-icon {
+        font-size: 32px;
+        margin-bottom: 16px;
+        display: block;
+    }
+
+    .feature-title {
+        color: var(--text-primary);
+        font-weight: 600;
+        font-size: 18px;
+        margin-bottom: 8px;
+    }
+
+    .feature-text {
+        color: var(--text-secondary);
+        font-size: 14px;
+    }
+
+    .about-section {
+        padding: 80px 0;
+        width: 100%;
+    }
+
+    .glass-container {
+        background: var(--glass-fill);
+        border: 1px solid var(--glass-border);
+        padding: 60px;
+        border-radius: 32px;
+        backdrop-filter: blur(20px);
+        text-align: center;
+    }
+
+    .about-container h2 {
+        font-size: 48px;
+        margin-bottom: 24px;
+        color: var(--text-primary);
+    }
+
+    .about-container p {
+        font-size: 18px;
+        line-height: 1.6;
+        color: var(--text-secondary);
+        max-width: 800px;
+        margin: 0 auto 20px;
+    }
+</style>

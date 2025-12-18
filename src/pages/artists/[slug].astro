@@ -1,0 +1,218 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const artists = await getCollection('artists');
+  return artists.map(artist => ({
+    params: { slug: artist.slug },
+    props: { artist },
+  }));
+}
+
+const { artist } = Astro.props;
+const { Content } = await artist.render();
+
+// Mock songs data - in a real app this would come from the markdown or a database
+const songs = [
+    { title: "Raga Bhairav - Drut Khayal", duration: "12:45", url: "https://cdn.upsound.com/demo/bhairav.mp3" },
+    { title: "Thumri - Ka Karu Sajani", duration: "08:20", url: "https://cdn.upsound.com/demo/thumri.mp3" },
+    { title: "Raga Yaman - Vilambit", duration: "25:30", url: "https://cdn.upsound.com/demo/yaman.mp3" }
+];
+---
+
+<Layout title={artist.data.name}>
+    <div class="artist-detail-container">
+        <!-- Artist Hero -->
+        <div class="artist-hero">
+            <div class="artist-header-info">
+                <div class="artist-header-avatar">
+                    <img src={artist.data.image || '/logo.jpg'} alt={artist.data.name} />
+                </div>
+                <div class="artist-header-text">
+                    <h1 class="hero-title">{artist.data.name}</h1>
+                    <div class="artist-tags">
+                        <span class="tag">Vocalist</span>
+                        <span class="tag">Kirana Gharana</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="artist-bio-card glass">
+                <h2>Biography</h2>
+                <div class="bio-content">
+                    <Content />
+                </div>
+            </div>
+        </div>
+
+        <!-- Songs Section -->
+        <div class="songs-section">
+            <h2 class="section-title">Musical <span>Treasury</span></h2>
+            <div class="songs-list">
+                {songs.map((song, index) => (
+                    <div class="song-item glass">
+                        <div class="song-info">
+                            <span class="song-index">{index + 1}</span>
+                            <div class="song-meta">
+                                <span class="song-title">{song.title}</span>
+                                <span class="song-duration">{song.duration}</span>
+                            </div>
+                        </div>
+                        <div class="song-actions">
+                            <button class="play-btn" data-url={song.url} data-title={song.title} data-artist={artist.data.name}>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M8 5v14l11-7z" />
+                                </svg>
+                            </button>
+                            <button class="download-btn" data-url={song.url}>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<script>
+    import { playTrack } from '../../lib/playerStore';
+    import { userStart } from '../../lib/authStore';
+
+    let currentUser: any = null;
+    userStart.subscribe(user => {
+        currentUser = user;
+    });
+
+    const playBtns = document.querySelectorAll('.play-btn');
+    playBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const url = btn.getAttribute('data-url');
+            const title = btn.getAttribute('data-title');
+            const artist = btn.getAttribute('data-artist');
+            
+            if (url && title && artist) {
+                playTrack({
+                    url,
+                    title,
+                    artist
+                });
+            }
+        });
+    });
+
+    const downloadBtns = document.querySelectorAll('.download-btn');
+    downloadBtns.forEach(btn => {
+        btn.addEventListener('click', async () => {
+            if (!currentUser) {
+                alert("Please login to download files.");
+                window.location.href = '/login';
+                return;
+            }
+
+            const url = btn.getAttribute('data-url');
+            if (url) {
+                // Verify if file exists with HEAD request
+                try {
+                    const response = await fetch(url, { method: 'HEAD' });
+                    if (response.ok) {
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.setAttribute('download', '');
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    } else {
+                        alert("File not found on server.");
+                    }
+                } catch (e) {
+                    alert("Error verifying download: " + e);
+                }
+            }
+        });
+    });
+</script>
+
+<style>
+        height: 250px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 4px solid var(--accent-secondary);
+        box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        flex-shrink: 0;
+    }
+
+    .artist-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .artist-info h1 {
+        margin: 0 0 1rem 0;
+        font-size: 2.5rem;
+        color: var(--accent-primary);
+    }
+    
+    .songs-list {
+        padding: 2rem;
+    }
+
+    .songs-list ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .song-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        border-bottom: 1px solid var(--glass-border);
+        transition: background 0.2s;
+    }
+
+    .song-item:last-child {
+        border-bottom: none;
+    }
+
+    .song-item:hover {
+        background: rgba(255,255,255,0.05);
+    }
+
+    .song-info {
+        display: flex;
+        gap: 1rem;
+        flex: 1;
+    }
+
+    .song-title {
+        font-weight: 600;
+    }
+
+    .song-duration {
+        opacity: 0.6;
+    }
+
+    .song-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .glass-btn.small {
+        font-size: 0.8rem;
+        padding: 0.3rem 0.8rem;
+    }
+    
+    .play-btn:hover {
+        background: var(--accent-primary);
+        color: black;
+    }
+
+    .download-btn:hover {
+        background: var(--accent-secondary);
+    }
+</style>

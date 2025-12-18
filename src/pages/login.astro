@@ -1,0 +1,271 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Login / Signup">
+    <div class="login-container">
+        <div class="login-card glass">
+            <h1 id="form-title">Welcome <span>Back</span></h1>
+            <p id="form-desc">
+                Login to access your personal treasury of music.
+            </p>
+
+            <form id="auth-form" class="auth-form">
+                <div class="form-group" id="name-group" style="display: none;">
+                    <label for="full-name">Full Name</label>
+                    <input
+                        type="text"
+                        id="full-name"
+                        placeholder="Pandit Bhimsen Joshi"
+                    />
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input
+                        type="email"
+                        id="email"
+                        required
+                        placeholder="name@example.com"
+                    />
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        required
+                        placeholder="••••••••"
+                    />
+                </div>
+
+                <button type="submit" id="submit-btn" class="glass-btn btn-full"
+                    >Login</button
+                >
+            </form>
+
+            <div class="divider">
+                <span>OR</span>
+            </div>
+
+            <button id="google-btn" class="glass-btn btn-full google-btn">
+                <img
+                    src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                    width="18"
+                    height="18"
+                    alt="Google"
+                />
+                Sign in with Google
+            </button>
+
+            <p class="toggle-text">
+                <span id="toggle-label">Don't have an account?</span>
+                <button id="toggle-btn" class="text-btn">Sign Up</button>
+            </p>
+        </div>
+    </div>
+</Layout>
+
+<script>
+    import { auth } from "../lib/firebase";
+    import {
+        signInWithEmailAndPassword,
+        createUserWithEmailAndPassword,
+        GoogleAuthProvider,
+        signInWithPopup,
+        updateProfile,
+    } from "firebase/auth";
+
+    const authForm = document.getElementById("auth-form") as HTMLFormElement;
+    const emailInput = document.getElementById("email") as HTMLInputElement;
+    const passInput = document.getElementById("password") as HTMLInputElement;
+    const nameInput = document.getElementById("full-name") as HTMLInputElement;
+    const nameGroup = document.getElementById("name-group");
+    const submitBtn = document.getElementById("submit-btn");
+    const toggleBtn = document.getElementById("toggle-btn");
+    const toggleLabel = document.getElementById("toggle-label");
+    const formTitle = document.getElementById("form-title");
+    const formDesc = document.getElementById("form-desc");
+    const googleBtn = document.getElementById("google-btn");
+
+    let isLogin = true;
+
+    toggleBtn?.addEventListener("click", () => {
+        isLogin = !isLogin;
+        if (isLogin) {
+            if (formTitle) formTitle.innerHTML = "Welcome <span>Back</span>";
+            if (formDesc)
+                formDesc.textContent =
+                    "Login to access your personal treasury of music.";
+            if (submitBtn) submitBtn.textContent = "Login";
+            if (toggleLabel) toggleLabel.textContent = "Don't have an account?";
+            if (toggleBtn) toggleBtn.textContent = "Sign Up";
+            if (nameGroup) nameGroup.style.display = "none";
+            if (nameInput) nameInput.required = false;
+        } else {
+            if (formTitle) formTitle.innerHTML = "Create <span>Account</span>";
+            if (formDesc)
+                formDesc.textContent =
+                    "Join Swaramanjusha to start your musical journey.";
+            if (submitBtn) submitBtn.textContent = "Sign Up";
+            if (toggleLabel)
+                toggleLabel.textContent = "Already have an account?";
+            if (toggleBtn) toggleBtn.textContent = "Login";
+            if (nameGroup) nameGroup.style.display = "block";
+            if (nameInput) nameInput.required = true;
+        }
+    });
+
+    authForm?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = emailInput.value;
+        const pass = passInput.value;
+        const name = nameInput.value;
+
+        try {
+            if (isLogin) {
+                await signInWithEmailAndPassword(auth, email, pass);
+            } else {
+                const userCredential = await createUserWithEmailAndPassword(
+                    auth,
+                    email,
+                    pass,
+                );
+                if (name) {
+                    await updateProfile(userCredential.user, {
+                        displayName: name,
+                    });
+                }
+            }
+            window.location.href = "/profile";
+        } catch (error: any) {
+            alert(error.message);
+        }
+    });
+
+    googleBtn?.addEventListener("click", async () => {
+        const provider = new GoogleAuthProvider();
+        try {
+            await signInWithPopup(auth, provider);
+            window.location.href = "/profile";
+        } catch (error: any) {
+            alert(error.message);
+        }
+    });
+</script>
+
+<style>
+    .login-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh;
+        width: 100%;
+        padding: 20px;
+    }
+
+    .login-card {
+        width: 100%;
+        max-width: 440px;
+        padding: 50px 40px;
+        border-radius: 32px;
+        background: var(--glass-fill);
+        box-shadow: var(--glass-shadow);
+        backdrop-filter: blur(25px) saturate(180%);
+        -webkit-backdrop-filter: blur(25px) saturate(180%);
+        border: 1px solid var(--glass-border);
+        text-align: center;
+    }
+
+    h1 {
+        font-size: 36px;
+        margin-bottom: 12px;
+        color: var(--text-primary);
+    }
+
+    h1 span {
+        color: var(--accent-color);
+        font-family: "Dancing Script", cursive;
+    }
+
+    p {
+        color: var(--text-secondary);
+        margin-bottom: 40px;
+        font-size: 15px;
+    }
+
+    .auth-form {
+        text-align: left;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    label {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-primary);
+        padding-left: 4px;
+    }
+
+    input {
+        height: 50px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--glass-border);
+        border-radius: 12px;
+        padding: 0 16px;
+        color: white;
+        font-size: 15px;
+        transition: border-color 0.2s;
+    }
+
+    input:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .btn-full {
+        width: 100%;
+        height: 50px;
+        margin-top: 10px;
+        font-size: 16px;
+    }
+
+    .divider {
+        opacity: 0.5;
+        font-size: 0.8rem;
+    }
+
+    .google-btn {
+        width: 100%;
+        justify-content: center;
+        background: white;
+        color: #333;
+    }
+
+    .google-btn:hover {
+        background: #f0f0f0;
+    }
+
+    .toggle-text {
+        text-align: center;
+        margin-top: 2rem;
+        font-size: 0.9rem;
+    }
+
+    #toggle-btn {
+        background: none;
+        border: none;
+        color: var(--accent-primary);
+        cursor: pointer;
+        text-decoration: underline;
+    }
+</style>

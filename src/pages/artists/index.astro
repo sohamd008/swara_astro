@@ -1,0 +1,57 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ArtistCard from "../../components/ArtistCard.astro";
+import { getCollection } from "astro:content";
+
+const artists = await getCollection("artists");
+---
+
+<Layout title="Artists">
+    <div class="hero-content">
+        <h1 class="hero-title artists-title">Legacy <span>Artists</span></h1>
+        <p class="hero-desc">
+            Explore our curated archive of Indian Classical Music legends. <br
+            /> Rare compositions, secure and accessible.
+        </p>
+
+        <div class="artists-grid">
+            {artists.map((artist) => <ArtistCard artist={artist} />)}
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .hero-content {
+        text-align: center;
+        max-width: 1000px;
+        z-index: 2;
+        width: 100%;
+        padding: 0 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .hero-title.artists-title {
+        font-size: 56px;
+        margin-bottom: 16px;
+    }
+
+    .hero-title span {
+        color: var(--accent-color);
+        font-family: "Dancing Script", cursive;
+    }
+
+    .hero-desc {
+        font-size: 18px;
+        color: var(--text-secondary);
+        margin-bottom: 50px;
+    }
+
+    .artists-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 24px;
+        width: 100%;
+    }
+</style>

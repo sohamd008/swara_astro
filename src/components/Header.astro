@@ -1,0 +1,132 @@
+---
+import { userStart } from '../lib/authStore';
+---
+
+<header class="glass-header">
+  <div class="nav-container">
+    <a href="/" class="logo">
+      <img src="/logo.jpg" alt="Logo" class="logo-icon" width="40" height="40">
+      Swaramanjusha
+    </a>
+    <nav class="nav-links" id="nav-menu">
+      <a href="/" class="nav-link">Home</a>
+      <a href="/artists" class="nav-link">Artists</a>
+      <a href="#" class="nav-link">About Us</a>
+      <div id="auth-container" style="display:contents">
+          <!-- Placeholder for JS injection -->
+          <li id="auth-link" style="list-style: none;"><a href="/login" class="nav-link nav-btn">Login / Signup</a></li>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  import { userStart } from '../lib/authStore';
+
+  const authLink = document.getElementById('auth-link');
+  
+  userStart.subscribe(user => {
+    if (user === null) return; // Loading
+    
+    if (user) {
+        if(authLink) authLink.innerHTML = `<a href="/profile" class="nav-link nav-btn profile-btn" style="display: flex; align-items: center; gap: 8px;">
+            <svg style="width:18px;height:18px;" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+            </svg>
+            Profile
+        </a>`;
+    } else {
+        if(authLink) authLink.innerHTML = `<a href="/login" class="nav-link nav-btn">Login / Signup</a>`;
+    }
+  });
+</script>
+
+<style>
+  .glass-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    background: var(--header-bg);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid var(--glass-border);
+  }
+
+  .nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 40px;
+  }
+
+  .logo {
+    font-family: "Dancing Script", cursive;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+  }
+
+  .logo-icon {
+    height: 40px;
+    width: auto;
+    margin-right: 12px;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .nav-link {
+    text-decoration: none;
+    color: var(--nav-link-color);
+    font-size: 15px;
+    font-weight: 500;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .nav-link:hover {
+    opacity: 1;
+  }
+
+  .nav-link.active-page {
+    opacity: 1;
+    font-weight: 600;
+    color: var(--accent-color);
+  }
+
+  .nav-btn {
+    padding: 10px 24px;
+    background: var(--accent-color);
+    color: white !important;
+    border-radius: 20px;
+    font-weight: 600;
+    opacity: 1;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .nav-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(255, 45, 85, 0.4);
+  }
+</style>
+

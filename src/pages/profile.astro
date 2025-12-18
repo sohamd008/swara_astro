@@ -1,0 +1,248 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Profile">
+    <div class="container profile-container">
+        <!-- PROFILE INFO CARD -->
+        <div class="profile-card" id="profile-card">
+            <div class="avatar-section" id="profile-avatar">?</div>
+            <div class="info-section">
+                <div class="info-label">Full Name</div>
+                <div class="info-value" id="profile-name">Loading...</div>
+
+                <div class="info-label" id="email-label">Email Address</div>
+                <div class="info-value" id="profile-email">...</div>
+
+                <div class="info-label">Member Since</div>
+                <div class="info-value" id="profile-created">...</div>
+
+                <div class="action-buttons">
+                    <button
+                        id="reset-pwd-btn"
+                        class="glass-btn btn-small secondary"
+                        >Reset Password</button
+                    >
+                    <button
+                        id="logout-btn"
+                        class="glass-btn btn-small"
+                        style="background-color: #ff3b30; border: none;"
+                        >Logout</button
+                    >
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="dash-item glass">
+                <span style="font-size: 40px; margin-bottom: 10px;">🎵</span>
+                <h3>My Collection</h3>
+                <p>You haven't saved any notes yet.</p>
+                <a
+                    href="/artists"
+                    style="color: var(--accent-color); margin-top: 10px; text-decoration: none;"
+                    >Browse Artists</a
+                >
+            </div>
+            <div class="dash-item glass">
+                <span style="font-size: 40px; margin-bottom: 10px;">⚙️</span>
+                <h3>Settings</h3>
+                <p>Account preferences coming soon.</p>
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<script>
+    import { userStart, signOut } from "../lib/authStore";
+    import { sendPasswordResetEmail } from "firebase/auth";
+    import { auth } from "../lib/firebase";
+
+    const profileEmail = document.getElementById("profile-email");
+    const profileName = document.getElementById("profile-name");
+    const profileCreated = document.getElementById("profile-created");
+    const profileAvatar = document.getElementById("profile-avatar");
+    const logoutBtn = document.getElementById("logout-btn");
+    const resetBtn = document.getElementById("reset-pwd-btn");
+
+    userStart.subscribe((user) => {
+        if (user === null) return;
+
+        if (!user) {
+            window.location.href = "/login";
+            return;
+        }
+
+        if (profileEmail) profileEmail.textContent = user.email;
+        if (profileName)
+            profileName.textContent = user.displayName || "Music Lover";
+
+        // We need metadata for creation time, which is not in our atom currently.
+        // Let's get it from auth directly if available
+        const fbUser = auth.currentUser;
+        if (fbUser && profileCreated) {
+            const creationTime = new Date(fbUser.metadata.creationTime!);
+            profileCreated.textContent = creationTime.toLocaleDateString(
+                undefined,
+                { year: "numeric", month: "long", day: "numeric" },
+            );
+        }
+
+        if (profileAvatar) {
+            profileAvatar.textContent = (user.displayName || user.email)
+                .charAt(0)
+                .toUpperCase();
+        }
+    });
+
+    logoutBtn?.addEventListener("click", async () => {
+        await signOut();
+        window.location.href = "/";
+    });
+
+    resetBtn?.addEventListener("click", async () => {
+        const user = auth.currentUser;
+        if (user && user.email) {
+            if (confirm("Send password reset email to " + user.email + "?")) {
+                try {
+                    await sendPasswordResetEmail(auth, user.email);
+                    alert("Password reset email sent!");
+                } catch (error: any) {
+                    alert("Error: " + error.message);
+                }
+            }
+        }
+    });
+</script>
+
+<style>
+    .profile-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 40px;
+        padding-top: 40px;
+    }
+
+    .profile-card {
+        position: relative;
+        width: 100%;
+        max-width: 800px;
+        padding: 40px;
+        border-radius: 30px;
+        background: var(--glass-fill);
+        box-shadow: var(--glass-shadow);
+        backdrop-filter: blur(25px) saturate(180%);
+        -webkit-backdrop-filter: blur(25px) saturate(180%);
+        border: 1px solid var(--glass-border);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 40px;
+    }
+
+    @media (max-width: 768px) {
+        .profile-card {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+
+    .avatar-section {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--blob-1), var(--blob-2));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 48px;
+        color: white;
+        font-weight: bold;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        flex-shrink: 0;
+    }
+
+    .info-section {
+        flex: 1;
+        text-align: left;
+    }
+
+    @media (max-width: 768px) {
+        .info-section {
+            text-align: center;
+        }
+    }
+
+    .info-label {
+        font-size: 13px;
+        text-transform: uppercase;
+        color: var(--text-secondary);
+        margin-bottom: 4px;
+        letter-spacing: 1px;
+    }
+
+    .info-value {
+        font-size: 20px;
+        color: var(--text-primary);
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 12px;
+        margin-top: 10px;
+    }
+
+    @media (max-width: 768px) {
+        .action-buttons {
+            justify-content: center;
+            flex-direction: column;
+        }
+    }
+
+    .btn-small {
+        height: 40px;
+        font-size: 14px;
+        padding: 0 20px;
+    }
+
+    .secondary {
+        background: var(--btn-glass-bg);
+        border: 1px solid var(--btn-glass-border);
+    }
+
+    .dashboard-grid {
+        width: 100%;
+        max-width: 800px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .dash-item {
+        background: var(--glass-fill);
+        border: 1px solid var(--glass-border);
+        padding: 30px;
+        border-radius: 24px;
+        backdrop-filter: blur(10px);
+        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: var(--text-secondary);
+    }
+
+    .dash-item h3 {
+        color: var(--text-primary);
+        margin-bottom: 10px;
+    }
+</style>
